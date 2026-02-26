@@ -118,6 +118,16 @@ export default function AdminDashboard() {
         </div>
       </div>
 
+{/* Quick Links */}
+<div className="max-w-7xl mx-auto mb-6 flex gap-4">
+  <button
+    onClick={() => router.push("/admin/dashboard/blog")}
+    className="px-6 py-3 bg-purple-600 hover:bg-purple-700 rounded-xl font-semibold transition"
+  >
+    Manage Blogs
+  </button>
+</div>
+
       {/* Add Project Button */}
       <div className="max-w-7xl mx-auto mb-6">
         <button

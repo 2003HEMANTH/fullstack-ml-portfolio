@@ -45,7 +45,7 @@ export default function Home() {
     <main className="min-h-screen bg-[#020818] text-white overflow-x-hidden">
 
       {/* Animated background blobs */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
         <div className="absolute top-0 left-0 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl animate-pulse" />
         <div className="absolute bottom-0 right-0 w-80 h-80 bg-cyan-500/10 rounded-full blur-3xl animate-pulse" />
         <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-blue-400/10 rounded-full blur-2xl animate-pulse" />
@@ -53,7 +53,7 @@ export default function Home() {
 
       {/* Grid overlay */}
       <div
-        className="fixed inset-0 pointer-events-none opacity-5"
+        className="fixed inset-0 pointer-events-none opacity-5 z-0"
         style={{
           backgroundImage:
             "linear-gradient(rgba(255,255,255,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.3) 1px, transparent 1px)",

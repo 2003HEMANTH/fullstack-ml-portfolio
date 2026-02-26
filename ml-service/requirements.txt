@@ -1,0 +1,6 @@
+flask
+flask-cors
+pdfplumber
+scikit-learn
+nltk
+python-dotenv

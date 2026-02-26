@@ -6,8 +6,7 @@ export default function Navbar() {
   const router = useRouter();
 
   return (
-    <nav className="fixed top-0 w-full flex justify-between px-10 py-4 bg-black/30 backdrop-blur-lg border-b border-white/10">
-      
+<nav className="fixed top-0 w-full flex justify-between items-center px-10 py-4 bg-black/30 backdrop-blur-lg border-b border-white/10 z-[9999]">      
       {/* Home Logo Click → No history */}
       <h2 
         onClick={() => router.replace("/")} 

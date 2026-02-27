@@ -19,7 +19,7 @@ except:
     pass
 
 app = Flask(__name__)
-CORS(app, origins=["http://localhost:3000"])
+CORS(app, origins=["http://localhost:3000", "http://54.66.242.6:3000"])
 
 # Job role skill requirements
 JOB_ROLES = {

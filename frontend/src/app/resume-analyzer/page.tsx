@@ -35,8 +35,7 @@ export default function ResumeAnalyzerPage() {
       const formData = new FormData();
       formData.append("resume", file);
 
-      const res = await fetch("http://localhost:8000/analyze", {
-        method: "POST",
+      const res = await fetch(`${process.env.NEXT_PUBLIC_ML_URL}/analyze`, {        method: "POST",
         body: formData,
       });
 

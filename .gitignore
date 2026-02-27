@@ -12,6 +12,9 @@ out/
 
 # OS
 .DS_Store
-Thumbs.db"portfolio-key.pem" 
-"*.pem" 
-"*.pdf" 
+Thumbs.db
+
+# Sensitive files
+*.pem
+*.pdf
+.env.local

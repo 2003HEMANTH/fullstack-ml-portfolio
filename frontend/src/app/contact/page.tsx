@@ -32,7 +32,7 @@ export default function ContactPage() {
       <div className="w-full max-w-2xl">
         <h1 className="text-5xl font-bold text-center text-blue-400 mb-4">Contact Me</h1>
         <p className="text-center text-gray-400 mb-12">
-          Have a project in mind? Let's talk.
+          Have a project in mind? Lets talk.
         </p>
 
         {success ? (
@@ -40,7 +40,7 @@ export default function ContactPage() {
             <div className="text-5xl mb-4">🎉</div>
             <h2 className="text-2xl font-bold text-green-400 mb-2">Message Sent!</h2>
             <p className="text-gray-400 mb-6">
-              Thanks for reaching out. I'll get back to you soon.
+              Thanks for reaching out. I will get back to you soon.
             </p>
             <button
               onClick={() => setSuccess(false)}

@@ -4,7 +4,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 
 const links = [
-  { href: "/", label: "Home" },
+  { href: "/home", label: "Home" },
   { href: "/projects", label: "Projects" },
   { href: "/blog", label: "Blog" },
   { href: "/resume-analyzer", label: "Resume AI" },
@@ -32,6 +32,9 @@ export default function Navbar() {
     return () => { document.body.style.overflow = ""; };
   }, [menuOpen]);
 
+  // Hide navbar on landing page
+  if (pathname === "/" || pathname === "/admin") return null;
+
   return (
     <>
       <nav
@@ -47,7 +50,7 @@ export default function Navbar() {
 
           {/* Logo */}
           <button
-            onClick={() => router.replace("/")}
+            onClick={() => router.replace("/home")}
             className="group flex items-center gap-2 focus:outline-none"
           >
             <div
@@ -104,12 +107,12 @@ export default function Navbar() {
 
           {/* Desktop Right Side */}
           <div className="hidden md:flex items-center gap-3">
-            <Link
+            {/* <Link
               href="/admin"
               className="px-4 py-2 rounded-lg text-xs font-mono transition-all duration-200 text-gray-600 hover:text-red-400 border border-transparent hover:border-red-500/20"
             >
               Admin
-            </Link>
+            </Link> */}
             <Link
               href="/contact"
               className="px-4 py-2 rounded-lg text-sm font-semibold text-white transition-all duration-300 hover:-translate-y-0.5"
@@ -237,7 +240,7 @@ export default function Navbar() {
             );
           })}
 
-          <div className="my-4" style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }} />
+          {/* <div className="my-4" style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }} />
 
           <Link
             href="/admin"
@@ -248,7 +251,7 @@ export default function Navbar() {
           >
             <span className="w-2 h-2 rounded-full bg-red-500/30 shrink-0" />
             <span className="font-medium text-sm">Admin Panel</span>
-          </Link>
+          </Link> */}
         </div>
 
         {/* Panel Footer */}

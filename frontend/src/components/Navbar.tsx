@@ -63,7 +63,8 @@ export default function Navbar() {
               className="font-black text-lg tracking-tight bg-clip-text text-transparent"
               style={{ backgroundImage: "linear-gradient(135deg, #ffffff, #a78bfa, #72efdd)" }}
             >
-              Hemanth.dev
+              Hemanth
+              
             </span>
           </button>
 

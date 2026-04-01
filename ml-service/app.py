@@ -10,6 +10,9 @@ from utils.parser import (
 )
 import os
 import nltk
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Download nltk data
 try:
@@ -19,7 +22,15 @@ except:
     pass
 
 app = Flask(__name__)
-CORS(app, origins=["http://localhost:3000", "http://54.66.242.6:3000"])
+
+def get_allowed_origins():
+    configured = os.environ.get("CORS_ORIGINS", "")
+    origins = [origin.strip() for origin in configured.split(",") if origin.strip()]
+    if origins:
+        return origins
+    return ["http://localhost:3000", "http://54.66.242.6:3000"]
+
+CORS(app, origins=get_allowed_origins())
 
 # Job role skill requirements
 JOB_ROLES = {

@@ -2,6 +2,17 @@ const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
+const getCookieOptions = () => {
+    const isProduction = process.env.NODE_ENV === "production";
+
+    return {
+        httpOnly: true,
+        secure: isProduction,
+        sameSite: isProduction ? "none" : "lax",
+        maxAge: 7 * 24 * 60 * 60 * 1000
+    };
+};
+
 // Generate JWT Token
 const generateToken = (id) => {
     return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "7d" });
@@ -29,12 +40,7 @@ const register = async(req, res) => {
 
         const token = generateToken(user._id);
 
-        res.cookie("token", token, {
-            httpOnly: true,
-            secure: false,
-            sameSite: "lax",
-            maxAge: 7 * 24 * 60 * 60 * 1000
-        });
+        res.cookie("token", token, getCookieOptions());
 
         res.status(201).json({
             success: true,
@@ -68,12 +74,7 @@ const login = async(req, res) => {
 
         const token = generateToken(user._id);
 
-        res.cookie("token", token, {
-            httpOnly: true,
-            secure: false,
-            sameSite: "lax",
-            maxAge: 7 * 24 * 60 * 60 * 1000
-        });
+        res.cookie("token", token, getCookieOptions());
 
         res.json({
             success: true,
@@ -92,7 +93,10 @@ const login = async(req, res) => {
 
 // @route POST /api/auth/logout
 const logout = async(req, res) => {
-    res.cookie("token", "", { maxAge: 0 });
+    res.cookie("token", "", {
+        ...getCookieOptions(),
+        maxAge: 0
+    });
     res.json({ success: true, message: "Logged out" });
 };
 

@@ -10,13 +10,26 @@ const allowedOrigins = (process.env.CLIENT_URL || "")
     .map((origin) => origin.trim())
     .filter(Boolean);
 
+const isAllowedOrigin = (origin) => {
+    if (!origin || allowedOrigins.length === 0 || allowedOrigins.includes(origin)) {
+        return true;
+    }
+
+    // Allow Vercel preview/production deployment domains without updating CORS every deploy.
+    if (/^https:\/\/.*\.vercel\.app$/i.test(origin)) {
+        return true;
+    }
+
+    return false;
+};
+
 // Connect Database
 connectDB();
 
 // Middleware
 app.use(cors({
     origin: (origin, callback) => {
-        if (!origin || allowedOrigins.length === 0 || allowedOrigins.includes(origin)) {
+        if (isAllowedOrigin(origin)) {
             return callback(null, true);
         }
 

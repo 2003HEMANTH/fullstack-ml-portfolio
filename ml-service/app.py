@@ -16,11 +16,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app, origins=[
-    "http://localhost:3000",
-    "http://54.66.242.6:3000",
-    "https://fullstack-ml-portfolio.vercel.app"
-])
+CORS(app, origins=["http://localhost:3000", "http://54.66.242.6:3000"])
 
 client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
 

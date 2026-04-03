@@ -98,7 +98,7 @@ function SkillBar({ name, level, delay }: { name: string; level: number; delay: 
   return (
     <div ref={ref} className="mb-5">
       <div className="flex justify-between mb-2">
-        <span className="text-sm text-gray-300 font-medium">{name}</span>
+        <span className="text-sm text-gray-200 font-medium">{name}</span>
         <span className="text-sm font-mono" style={{ color: THEME.turquoise }}>{level}%</span>
       </div>
       <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.06)" }}>
@@ -271,7 +271,7 @@ export default function Home() {
 
         {/* Bio */}
         <div className="relative z-10 mb-12 max-w-xl" style={{ opacity: heroVisible ? 1 : 0, transform: heroVisible ? "translateY(0)" : "translateY(20px)", transition: "all 0.9s ease 0.5s" }}>
-          <p className="text-gray-500 text-lg leading-relaxed">
+          <p className="text-gray-300 text-lg leading-relaxed">
             Building intelligent web systems at the intersection of{" "}
             <span className="font-semibold" style={{ color: THEME.freshSky }}>full-stack engineering</span>{" "}and{" "}
             <span className="font-semibold" style={{ color: THEME.turquoise }}>machine learning</span>.
@@ -311,7 +311,7 @@ export default function Home() {
 
           <button
             onClick={() => router.push("/contact")}
-            className="px-8 py-3.5 rounded-xl font-bold text-sm tracking-wide transition-all duration-300 hover:-translate-y-1 text-gray-400 hover:text-gray-200"
+            className="px-8 py-3.5 rounded-xl font-bold text-sm tracking-wide transition-all duration-300 hover:-translate-y-1 text-gray-300 hover:text-white"
             style={{ border: "1px solid rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.03)" }}
           >
             Get In Touch
@@ -328,8 +328,8 @@ export default function Home() {
             <span key={link.label} className="flex items-center gap-8">
               {i > 0 && <span className="w-px h-6 hidden sm:block" style={{ background: "rgba(255,255,255,0.08)" }} />}
               <a href={link.href} target={link.href.startsWith("http") ? "_blank" : undefined} rel="noopener noreferrer" className="group flex flex-col items-center gap-0.5 transition-all duration-200">
-                <span className="text-xs font-mono tracking-widest uppercase" style={{ color: "rgba(255,255,255,0.2)" }}>{link.label}</span>
-                <span className="text-gray-500 group-hover:text-white text-sm transition-colors duration-200" style={{}}>{link.sub}</span>
+                <span className="text-xs font-mono tracking-widest uppercase" style={{ color: "rgba(255,255,255,0.36)" }}>{link.label}</span>
+                <span className="text-gray-300 group-hover:text-white text-sm transition-colors duration-200">{link.sub}</span>
               </a>
             </span>
           ))}
@@ -359,7 +359,7 @@ export default function Home() {
                 <Counter target={stat.value} suffix={stat.suffix} />
               </div>
               <div className="text-sm font-semibold mb-1" style={{ color: stat.accent }}>{stat.label}</div>
-              <div className="text-xs text-gray-600">{stat.sub}</div>
+              <div className="text-xs text-gray-400">{stat.sub}</div>
             </GlowCard>
           ))}
         </div>
@@ -376,10 +376,10 @@ export default function Home() {
               <span className="bg-clip-text text-transparent" style={{ backgroundImage: `linear-gradient(135deg, ${THEME.royalViolet}, ${THEME.blueEnergy})` }}>intersection</span><br />
               <span className="text-white">of data and code</span>
             </h2>
-            <p className="text-gray-500 leading-relaxed mb-5">
+            <p className="text-gray-300 leading-relaxed mb-5">
               I am a Full-Stack Developer and Data Science postgraduate student at Kristu Jayanti College, Bengaluru. I bridge the gap between intelligent ML systems and production-ready web applications.
             </p>
-            <p className="text-gray-500 leading-relaxed mb-8">
+            <p className="text-gray-300 leading-relaxed mb-8">
               From building a real estate ROI prediction system with 0.81 R² accuracy to managing 20+ production VMs at 99% uptime, I bring both analytical rigor and engineering discipline to every project.
             </p>
             <div className="flex flex-wrap gap-2">
@@ -395,7 +395,7 @@ export default function Home() {
           </div>
 
           <GlowCard accent={THEME.slateIndigo} className="p-8">
-            <p className="text-xs text-gray-600 font-mono tracking-widest uppercase mb-6">Core Proficiencies</p>
+            <p className="text-xs text-gray-400 font-mono tracking-widest uppercase mb-6">Core Proficiencies</p>
             <SkillBar name="Python & Data Science" level={88} delay={0} />
             <SkillBar name="Full Stack (React / Next.js)" level={82} delay={100} />
             <SkillBar name="Machine Learning" level={78} delay={200} />
@@ -442,24 +442,26 @@ export default function Home() {
             ].map((exp) => (
               <GlowCard key={exp.role} accent={exp.accent} className="p-8">
                 <div className="absolute top-0 left-0 w-1 h-full rounded-l-2xl" style={{ background: `linear-gradient(to bottom, ${exp.accent}, ${exp.accentLight}00)` }} />
+                <div className="pl-4 sm:pl-5">
                 <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4 mb-6">
-                  <div>
-                    <div className="flex items-center gap-3 mb-2">
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-3 mb-2 flex-wrap">
                       <span className="px-2.5 py-0.5 rounded-md text-xs font-mono" style={{ background: `${exp.accent}18`, border: `1px solid ${exp.accent}30`, color: exp.accentLight }}>{exp.year}</span>
-                      <span className="text-gray-700 text-xs">{exp.tag}</span>
+                      <span className="text-gray-400 text-xs">{exp.tag}</span>
                     </div>
                     <h3 className="text-2xl font-black text-white mb-1">{exp.role}</h3>
                     <p className="font-semibold" style={{ color: exp.accentLight }}>{exp.company}</p>
                   </div>
-                  <div className="inline-flex items-center px-4 py-2 rounded-xl text-sm shrink-0" style={{ border: `1px solid ${exp.accent}25`, background: `${exp.accent}10`, color: exp.accentLight }}>{exp.period}</div>
+                  <div className="inline-flex items-center self-start px-4 py-2 rounded-xl text-sm shrink-0" style={{ border: `1px solid ${exp.accent}25`, background: `${exp.accent}10`, color: exp.accentLight }}>{exp.period}</div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {exp.points.map((p, i) => (
                     <div key={i} className="flex gap-3 p-3 rounded-xl" style={{ background: "rgba(255,255,255,0.025)", border: "1px solid rgba(255,255,255,0.05)" }}>
                       <span className="shrink-0 mt-0.5" style={{ color: exp.accent }}>▹</span>
-                      <span className="text-gray-400 text-sm leading-relaxed">{p}</span>
+                      <span className="text-gray-200 text-sm leading-relaxed">{p}</span>
                     </div>
                   ))}
+                </div>
                 </div>
               </GlowCard>
             ))}
@@ -577,7 +579,7 @@ export default function Home() {
             <span className="text-white">Lets work</span><br />
             <span className="bg-clip-text text-transparent" style={{ backgroundImage: mainGradient }}>together.</span>
           </h2>
-          <p className="text-gray-500 text-lg mb-12 leading-relaxed">
+          <p className="text-gray-300 text-lg mb-12 leading-relaxed">
             Open to full-time positions, internships and freelance projects.
             Whether you need an ML pipeline or a full-stack product, lets build it.
           </p>
@@ -598,7 +600,7 @@ export default function Home() {
             </button>
             <button
               onClick={() => router.push("/projects")}
-              className="px-10 py-4 rounded-xl font-bold text-base transition-all duration-300 hover:-translate-y-1 text-gray-400 hover:text-white"
+              className="px-10 py-4 rounded-xl font-bold text-base transition-all duration-300 hover:-translate-y-1 text-gray-300 hover:text-white"
               style={{ border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.03)" }}
             >
               View My Work

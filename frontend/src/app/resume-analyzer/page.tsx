@@ -199,7 +199,7 @@ export default function ResumeAnalyzerPage() {
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border text-sm mb-6"
             style={{ background: "rgba(116,0,184,0.1)", border: "1px solid rgba(116,0,184,0.3)", color: THEME.turquoise }}>
             <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: THEME.turquoise }} />
-            Powered by Claude AI
+            Powered by AI
           </div>
           <h1 className="text-4xl md:text-5xl font-black mb-4">
             <span className="bg-clip-text text-transparent" style={{ backgroundImage: `linear-gradient(135deg, #ffffff, ${THEME.slate}, ${THEME.turquoise})` }}>
@@ -280,7 +280,7 @@ export default function ResumeAnalyzerPage() {
               {loading ? (
                 <span className="flex items-center justify-center gap-3">
                   <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  Claude AI is analyzing your resume...
+                  AI is analyzing your resume...
                 </span>
               ) : (
                 <span className="flex items-center justify-center gap-2">
@@ -291,7 +291,7 @@ export default function ResumeAnalyzerPage() {
 
             {loading && (
               <div className="text-center">
-                <p className="text-gray-600 text-sm animate-pulse">This takes 10-15 seconds. Claude is reading your resume carefully...</p>
+                <p className="text-gray-600 text-sm animate-pulse">This takes 10-15 seconds. AI is reviewing your resume carefully...</p>
               </div>
             )}
           </div>
@@ -511,7 +511,7 @@ export default function ResumeAnalyzerPage() {
               {/* REWRITE TAB */}
               {activeTab === "rewrite" && (
                 <div className="space-y-4">
-                  <p className="text-gray-600 text-sm">Claude has rewritten these bullet points to be more impactful with metrics and stronger language.</p>
+                  <p className="text-gray-600 text-sm">AI has rewritten these bullet points to be more impactful with metrics and stronger language.</p>
                   {analysis.rewrite_suggestions.map((r, i) => (
                     <div key={i} className="rounded-2xl overflow-hidden" style={{ border: "1px solid rgba(255,255,255,0.06)" }}>
                       <div className="p-4" style={{ background: "rgba(239,68,68,0.05)", borderBottom: "1px solid rgba(239,68,68,0.1)" }}>

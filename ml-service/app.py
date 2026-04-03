@@ -9,158 +9,152 @@ from utils.parser import (
     extract_experience_years
 )
 import os
-import nltk
+import json
+from groq import Groq
 from dotenv import load_dotenv
 
 load_dotenv()
 
-# Download nltk data
-try:
-    nltk.download('punkt', quiet=True)
-    nltk.download('stopwords', quiet=True)
-except:
-    pass
-
 app = Flask(__name__)
+CORS(app, origins=[
+    "http://localhost:3000",
+    "http://54.66.242.6:3000",
+    "https://fullstack-ml-portfolio.vercel.app"
+])
 
-def get_allowed_origins():
-    configured = os.environ.get("CORS_ORIGINS", "")
-    origins = [origin.strip() for origin in configured.split(",") if origin.strip()]
-    if origins:
-        return origins
-    return ["http://localhost:3000", "http://54.66.242.6:3000"]
+client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
 
-CORS(app, origins=get_allowed_origins())
+def analyze_with_groq(resume_text: str, job_description: str = None):
 
-# Job role skill requirements
-JOB_ROLES = {
-    "Full Stack Developer": [
-        "react", "node.js", "javascript", "mongodb", "html", "css",
-        "express", "next.js", "typescript", "rest api", "git"
-    ],
-    "Data Scientist": [
-        "python", "pandas", "numpy", "scikit-learn", "machine learning",
-        "sql", "matplotlib", "deep learning", "statistics", "tensorflow"
-    ],
-    "ML Engineer": [
-        "python", "tensorflow", "pytorch", "scikit-learn", "deep learning",
-        "machine learning", "nlp", "docker", "aws", "git"
-    ],
-    "Cloud Engineer": [
-        "aws", "azure", "docker", "kubernetes", "linux", "ci/cd",
-        "terraform", "jenkins", "git", "bash"
-    ],
-    "Data Analyst": [
-        "sql", "python", "excel", "power bi", "tableau", "pandas",
-        "data analysis", "matplotlib", "statistics"
-    ],
-}
+    if job_description:
+        prompt = f"""You are an expert ATS system and career coach. Analyze this resume against the job description and return a detailed JSON analysis.
 
-def calculate_ats_score(text, skills):
-    score = 0
+RESUME:
+{resume_text}
 
-    # Has email
-    if extract_email(text):
-        score += 15
+JOB DESCRIPTION:
+{job_description}
 
-    # Has phone
-    if extract_phone(text):
-        score += 10
+Return ONLY a valid JSON object with this exact structure (no markdown, no extra text, no backticks):
+{{
+  "ats_score": <number 0-100>,
+  "jd_match_score": <number 0-100>,
+  "overall_rating": "<Excellent|Good|Average|Needs Work>",
+  "summary": "<2-3 sentence AI summary of the candidate>",
+  "ats_breakdown": {{
+    "formatting": <number 0-25>,
+    "keywords": <number 0-25>,
+    "experience": <number 0-25>,
+    "skills": <number 0-25>
+  }},
+  "matched_keywords": ["<keyword1>", "<keyword2>"],
+  "missing_keywords": ["<keyword1>", "<keyword2>"],
+  "skill_gap": ["<skill1>", "<skill2>"],
+  "strengths": ["<strength1>", "<strength2>", "<strength3>"],
+  "weaknesses": ["<weakness1>", "<weakness2>"],
+  "section_feedback": {{
+    "summary_objective": "<feedback or null>",
+    "experience": "<feedback>",
+    "skills": "<feedback>",
+    "education": "<feedback>",
+    "overall_structure": "<feedback>"
+  }},
+  "ai_suggestions": [
+    {{
+      "priority": "High|Medium|Low",
+      "category": "<category>",
+      "suggestion": "<detailed suggestion>",
+      "example": "<example of improvement or null>"
+    }}
+  ],
+  "rewrite_suggestions": [
+    {{
+      "original": "<original bullet point from resume>",
+      "improved": "<improved version with metrics and impact>"
+    }}
+  ],
+  "interview_likelihood": "<High|Medium|Low>",
+  "recommendation": "<detailed overall recommendation>"
+}}"""
+    else:
+        prompt = f"""You are an expert ATS system and career coach. Analyze this resume and return a detailed JSON analysis.
 
-    # Has education
-    if extract_education(text):
-        score += 15
+RESUME:
+{resume_text}
 
-    # Skills count
-    skill_score = min(len(skills) * 3, 30)
-    score += skill_score
+Return ONLY a valid JSON object with this exact structure (no markdown, no extra text, no backticks):
+{{
+  "ats_score": <number 0-100>,
+  "jd_match_score": null,
+  "overall_rating": "<Excellent|Good|Average|Needs Work>",
+  "summary": "<2-3 sentence AI summary of the candidate>",
+  "ats_breakdown": {{
+    "formatting": <number 0-25>,
+    "keywords": <number 0-25>,
+    "experience": <number 0-25>,
+    "skills": <number 0-25>
+  }},
+  "matched_keywords": [],
+  "missing_keywords": [],
+  "skill_gap": ["<skill1>", "<skill2>"],
+  "strengths": ["<strength1>", "<strength2>", "<strength3>"],
+  "weaknesses": ["<weakness1>", "<weakness2>"],
+  "section_feedback": {{
+    "summary_objective": "<feedback or null>",
+    "experience": "<feedback>",
+    "skills": "<feedback>",
+    "education": "<feedback>",
+    "overall_structure": "<feedback>"
+  }},
+  "ai_suggestions": [
+    {{
+      "priority": "High|Medium|Low",
+      "category": "<category>",
+      "suggestion": "<detailed suggestion>",
+      "example": "<example of improvement or null>"
+    }}
+  ],
+  "rewrite_suggestions": [
+    {{
+      "original": "<original bullet point from resume>",
+      "improved": "<improved version with metrics and impact>"
+    }}
+  ],
+  "interview_likelihood": "<High|Medium|Low>",
+  "recommendation": "<detailed overall recommendation>"
+}}"""
 
-    # Keywords check
-    important_keywords = [
-        "experience", "project", "education", "skills",
-        "achievement", "certification", "internship"
-    ]
-    text_lower = text.lower()
-    keyword_hits = sum(1 for kw in important_keywords if kw in text_lower)
-    score += min(keyword_hits * 3, 20)
-
-    # Length check (good resumes have decent length)
-    word_count = len(text.split())
-    if word_count > 200:
-        score += 10
-
-    return min(score, 100)
-
-def calculate_skill_score(skills):
-    score = len(skills) * 5
-    return min(score, 100)
-
-def calculate_job_match(skills):
-    skills_lower = [s.lower() for s in skills]
-    matches = {}
-
-    for role, required_skills in JOB_ROLES.items():
-        matched = [s for s in required_skills if s in skills_lower]
-        percentage = round((len(matched) / len(required_skills)) * 100)
-        matches[role] = {
-            "score": percentage,
-            "matched_skills": matched,
-            "missing_skills": [s for s in required_skills if s not in skills_lower]
-        }
-
-    # Sort by score
-    sorted_matches = dict(
-        sorted(matches.items(), key=lambda x: x[1]["score"], reverse=True)
+    chat_completion = client.chat.completions.create(
+        messages=[
+            {
+                "role": "system",
+                "content": "You are an expert ATS system and career coach. Always respond with valid JSON only. No markdown, no extra text."
+            },
+            {
+                "role": "user",
+                "content": prompt
+            }
+        ],
+        model="llama-3.3-70b-versatile",
+        temperature=0.3,
+        max_tokens=3000,
     )
-    return sorted_matches
 
-def generate_suggestions(skills, ats_score, text):
-    suggestions = []
-    skills_lower = [s.lower() for s in skills]
+    response_text = chat_completion.choices[0].message.content.strip()
 
-    if not extract_email(text):
-        suggestions.append("Add your email address to the resume")
+    # Clean markdown if present
+    if "```json" in response_text:
+        response_text = response_text.split("```json")[1].split("```")[0].strip()
+    elif "```" in response_text:
+        response_text = response_text.split("```")[1].split("```")[0].strip()
 
-    if not extract_phone(text):
-        suggestions.append("Add your phone number to the resume")
+    return json.loads(response_text)
 
-    if ats_score < 60:
-        suggestions.append("Add more relevant keywords to improve ATS score")
-
-    if len(skills) < 8:
-        suggestions.append("Add more technical skills relevant to your target role")
-
-    if "git" not in skills_lower and "github" not in skills_lower:
-        suggestions.append("Add Git or GitHub to your skills section")
-
-    # Only suggest Docker if they have cloud interest
-    cloud_skills = ["aws", "azure", "linux", "kubernetes", "jenkins", "ci/cd"]
-    has_cloud_interest = any(s in skills_lower for s in cloud_skills)
-    if has_cloud_interest and "docker" not in skills_lower:
-        suggestions.append("Consider learning Docker — it pairs well with your cloud skills")
-
-    # Suggest AWS if they have cloud interest but no AWS
-    if has_cloud_interest and "aws" not in skills_lower:
-        suggestions.append("AWS certification would strengthen your cloud profile")
-
-    # Suggest deep learning if they have ML skills
-    ml_skills = ["scikit-learn", "tensorflow", "machine learning", "python"]
-    has_ml_interest = any(s in skills_lower for s in ml_skills)
-    if has_ml_interest and "deep learning" not in skills_lower:
-        suggestions.append("Consider adding Deep Learning skills to complement your ML profile")
-
-    word_count = len(text.split())
-    if word_count < 200:
-        suggestions.append("Your resume seems short. Add more details about your experience and projects")
-
-    if not suggestions:
-        suggestions.append("Excellent resume! Well structured with strong skills coverage")
-
-    return suggestions
 
 @app.route("/", methods=["GET"])
 def health():
     return jsonify({"message": "Resume Analyzer ML Service Running", "status": "ok"})
+
 
 @app.route("/analyze", methods=["POST"])
 def analyze_resume():
@@ -169,6 +163,7 @@ def analyze_resume():
             return jsonify({"error": "No resume file uploaded"}), 400
 
         file = request.files["resume"]
+        job_description = request.form.get("job_description", "").strip()
 
         if file.filename == "":
             return jsonify({"error": "No file selected"}), 400
@@ -177,41 +172,43 @@ def analyze_resume():
             return jsonify({"error": "Only PDF files are supported"}), 400
 
         # Extract text
-        text = extract_text_from_pdf(file)
+        resume_text = extract_text_from_pdf(file)
 
-        if not text:
+        if not resume_text:
             return jsonify({"error": "Could not extract text from PDF"}), 400
 
-        # Analysis
-        skills = extract_skills(text)
-        ats_score = calculate_ats_score(text, skills)
-        skill_score = calculate_skill_score(skills)
-        job_matches = calculate_job_match(skills)
-        suggestions = generate_suggestions(skills, ats_score, text)
-        email = extract_email(text)
-        phone = extract_phone(text)
-        experience_years = extract_experience_years(text)
+        # Basic extractions
+        skills = extract_skills(resume_text)
+        email = extract_email(resume_text)
+        phone = extract_phone(resume_text)
+        experience_years = extract_experience_years(resume_text)
+        word_count = len(resume_text.split())
+
+        # Groq AI analysis
+        ai_analysis = analyze_with_groq(
+            resume_text,
+            job_description if job_description else None
+        )
 
         return jsonify({
             "success": True,
             "data": {
-                "skills": skills,
-                "skill_score": skill_score,
-                "ats_score": ats_score,
-                "job_matches": job_matches,
-                "suggestions": suggestions,
-                "contact": {
+                "ai_analysis": ai_analysis,
+                "basic_info": {
+                    "skills": skills,
                     "email": email,
-                    "phone": phone
-                },
-                "experience_years": experience_years,
-                "word_count": len(text.split())
+                    "phone": phone,
+                    "experience_years": experience_years,
+                    "word_count": word_count,
+                    "has_jd": bool(job_description)
+                }
             }
         })
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
-    app.run(debug=True, port=port)
+    app.run(host="0.0.0.0", debug=False, port=port)

@@ -3,7 +3,7 @@ const { AppError, ValidationError } = require("../utils/errors");
 /**
  * Central error handler — registered as the LAST middleware.
  *
- * Maps AppError, Mongoose, and unknown errors to the standard envelope:
+ * Maps AppError, Mongoose, body-parser, CORS, and unknown errors to the standard envelope:
  * { error: { code, message, details, requestId } }
  */
 // eslint-disable-next-line no-unused-vars -- Express requires 4-arg signature
@@ -28,6 +28,42 @@ const errorHandler = (err, req, res, _next) => {
                 code: err.code,
                 message: err.message,
                 details: err.details,
+                requestId: req.id,
+            },
+        });
+    }
+
+    // ── CORS Forbidden Error ─────────────────────────────────────
+    if (err.message === "Not allowed by CORS") {
+        return res.status(403).json({
+            error: {
+                code: "FORBIDDEN",
+                message: "Not allowed by CORS",
+                details: [],
+                requestId: req.id,
+            },
+        });
+    }
+
+    // ── Payload Too Large (413 from body-parser) ────────────────
+    if (err.type === "entity.too.large" || err.status === 413 || err.statusCode === 413) {
+        return res.status(413).json({
+            error: {
+                code: "PAYLOAD_TOO_LARGE",
+                message: "Payload too large. Maximum allowed size is 100KB.",
+                details: [],
+                requestId: req.id,
+            },
+        });
+    }
+
+    // ── Malformed JSON Syntax (400 from body-parser) ────────────
+    if (err instanceof SyntaxError && (err.status === 400 || err.statusCode === 400) && "body" in err) {
+        return res.status(400).json({
+            error: {
+                code: "BAD_REQUEST",
+                message: "Malformed JSON in request body.",
+                details: [],
                 requestId: req.id,
             },
         });

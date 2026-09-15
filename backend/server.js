@@ -1,39 +1,63 @@
 const express = require("express");
+const helmet = require("helmet");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const mongoSanitize = require("express-mongo-sanitize");
+const mongoose = require("mongoose");
 const connectDB = require("./config/db");
 const requestId = require("./middleware/requestId");
 const errorHandler = require("./middleware/errorHandler");
-const { NotFoundError } = require("./utils/errors");
+const { apiLimiter } = require("./middleware/rateLimiter");
+const { NotFoundError, ForbiddenError } = require("./utils/errors");
 require("dotenv").config();
 
 const app = express();
-const allowedOrigins = (process.env.CLIENT_URL || "")
-    .split(",")
-    .map((origin) => origin.trim())
-    .filter(Boolean);
 
-// Connect Database
-connectDB();
+// Required on Render / reverse proxies for accurate client IP in rate limiting & TLS termination
+app.set("trust proxy", 1);
 
 // ── Middleware (order matters) ────────────────────────────────────
-app.use(requestId);                // FIRST — every request gets a UUID
+// 1. Request ID (FIRST — every request gets a UUID and X-Request-Id header)
+app.use(requestId);
 
-app.use(cors({
-    origin: (origin, callback) => {
-        if (!origin || allowedOrigins.length === 0 || allowedOrigins.includes(origin)) {
-            return callback(null, true);
-        }
+// 2. Helmet security headers with cross-origin resource policy for frontend
+app.use(
+    helmet({
+        crossOriginResourcePolicy: { policy: "cross-origin" },
+    })
+);
 
-        return callback(new Error("Not allowed by CORS"));
-    },
-    credentials: true
-}));
-app.use(express.json());
+// 3. CORS with explicit allowlist from CLIENT_URL
+const getAllowedOrigins = () =>
+    (process.env.CLIENT_URL || "")
+        .split(",")
+        .map((origin) => origin.trim())
+        .filter(Boolean);
+
+app.use(
+    cors({
+        origin: (origin, callback) => {
+            // Allow requests with no origin (e.g., mobile apps, curl, server-to-server)
+            if (!origin) {
+                return callback(null, true);
+            }
+            const allowed = getAllowedOrigins();
+            if (allowed.includes(origin)) {
+                return callback(null, true);
+            }
+            return callback(new ForbiddenError("Not allowed by CORS"));
+        },
+        credentials: true,
+    })
+);
+
+// 4. JSON Body parser capped at 100kb (mitigate body parser DoS)
+app.use(express.json({ limit: "100kb" }));
+
+// 5. Cookie Parser
 app.use(cookieParser());
 
-// Express 5 defines req.query as a getter; make it mutable for express-mongo-sanitize
+// 6. Express 5 compatibility for express-mongo-sanitize (req.query is a getter)
 app.use((req, _res, next) => {
     Object.defineProperty(req, "query", {
         value: { ...req.query },
@@ -43,14 +67,18 @@ app.use((req, _res, next) => {
     });
     next();
 });
-app.use(mongoSanitize());         // strip $ and . from req.body/query/params
-app.set("trust proxy", 1);
+
+// 7. Mongo Sanitize (strip $ and . from req.body/params/query)
+app.use(mongoSanitize());
 
 // Debug logger
-app.use((req, res, next) => {
+app.use((req, _res, next) => {
     console.log(`${req.method} ${req.url}`);
     next();
 });
+
+// 8. General rate limiter for all /api endpoints (100 per 15 min per IP)
+app.use("/api", apiLimiter);
 
 // ── Routes ───────────────────────────────────────────────────────
 app.use("/api/auth", require("./routes/authRoutes"));
@@ -59,7 +87,7 @@ app.use("/api/blogs", require("./routes/blogRoutes"));
 app.use("/api/contact", require("./routes/contactRoutes"));
 
 // Health check
-app.get("/", (req, res) => {
+app.get("/", (_req, res) => {
     res.json({ message: "Portfolio API Running 🚀" });
 });
 
@@ -71,5 +99,36 @@ app.use((req, _res, next) => {
 // ── Error handler (LAST) ─────────────────────────────────────────
 app.use(errorHandler);
 
+// ── Server startup & Graceful Shutdown ────────────────────────────
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+if (require.main === module) {
+    connectDB();
+    const server = app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+    const gracefulShutdown = (signal) => {
+        console.log(`Received ${signal}. Starting graceful shutdown...`);
+        server.close(async () => {
+            console.log("HTTP server closed. Closing MongoDB connection...");
+            try {
+                await mongoose.connection.close(false);
+                console.log("MongoDB connection closed. Exiting process.");
+                process.exit(0);
+            } catch (err) {
+                console.error("Error during MongoDB disconnection:", err);
+                process.exit(1);
+            }
+        });
+
+        // Force close after 10s if hanging
+        setTimeout(() => {
+            console.error("Graceful shutdown timed out. Forcing exit.");
+            process.exit(1);
+        }, 10000).unref();
+    };
+
+    process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
+    process.on("SIGINT", () => gracefulShutdown("SIGINT"));
+}
+
+module.exports = app;

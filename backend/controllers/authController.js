@@ -2,6 +2,7 @@ const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const cookieOptions = require("../config/cookieOptions");
+const { UnauthorizedError } = require("../utils/errors");
 
 // Generate JWT Token
 const generateToken = (id) => {
@@ -12,24 +13,14 @@ const generateToken = (id) => {
 const login = async (req, res) => {
     const { email, password } = req.body;
 
-    // Guard against NoSQL injection (A2 will replace with Zod)
-    if (typeof email !== "string" || typeof password !== "string") {
-        return res.status(400).json({
-            error: {
-                code: "INVALID_INPUT",
-                message: "Email and password must be strings.",
-            },
-        });
-    }
-
     const user = await User.findOne({ email });
     if (!user) {
-        return res.status(400).json({ message: "Invalid credentials" });
+        throw new UnauthorizedError("Invalid credentials");
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-        return res.status(400).json({ message: "Invalid credentials" });
+        throw new UnauthorizedError("Invalid credentials");
     }
 
     const token = generateToken(user._id);

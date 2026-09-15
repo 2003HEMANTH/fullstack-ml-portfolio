@@ -1,29 +1,30 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
+const { UnauthorizedError, ForbiddenError } = require("../utils/errors");
 
-const protect = async(req, res, next) => {
-    try {
-        const token = req.cookies.token;
+const protect = async (req, _res, next) => {
+    const token = req.cookies.token;
 
-        if (!token) {
-            return res.status(401).json({ message: "Not authorized, no token" });
-        }
-
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = await User.findById(decoded.id).select("-password");
-        next();
-
-    } catch (error) {
-        res.status(401).json({ message: "Not authorized, token failed" });
+    if (!token) {
+        throw new UnauthorizedError("Not authorized, no token");
     }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = await User.findById(decoded.id).select("-password");
+
+    if (!req.user) {
+        throw new UnauthorizedError("Not authorized, user not found");
+    }
+
+    next();
 };
 
-const adminOnly = (req, res, next) => {
+const adminOnly = (req, _res, next) => {
     if (req.user && req.user.role === "admin") {
-        next();
-    } else {
-        res.status(403).json({ message: "Admin access only" });
+        return next();
     }
+    throw new ForbiddenError("Admin access only");
 };
 
 module.exports = { protect, adminOnly };
+

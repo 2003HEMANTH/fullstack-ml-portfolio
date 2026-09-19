@@ -1,7 +1,9 @@
-from flask import Flask, request, jsonify
-from flask_cors import CORS
+from flask import Flask, Request, request, jsonify, g
+from io import BytesIO
+from uuid import uuid4
+from werkzeug.exceptions import HTTPException, RequestEntityTooLarge
+from utils.pdf_worker import ParseFailure, parse_pdf
 from utils.parser import (
-    extract_text_from_pdf,
     extract_skills,
     extract_email,
     extract_phone,
@@ -9,28 +11,75 @@ from utils.parser import (
     extract_experience_years
 )
 import os
-import nltk
+
 from dotenv import load_dotenv
 
 load_dotenv()
 
-# Download nltk data
-try:
-    nltk.download('punkt', quiet=True)
-    nltk.download('stopwords', quiet=True)
-except:
-    pass
+class MemoryRequest(Request):
+    def _get_file_stream(self, total_content_length, content_type, filename=None, content_length=None):
+        # Prevent Werkzeug's default upload spooling from writing to disk.
+        return BytesIO()
+
 
 app = Flask(__name__)
+app.request_class = MemoryRequest
+app.config["MAX_CONTENT_LENGTH"] = 5 * 1024 * 1024
+
 
 def get_allowed_origins():
-    configured = os.environ.get("CORS_ORIGINS", "")
-    origins = [origin.strip() for origin in configured.split(",") if origin.strip()]
-    if origins:
-        return origins
-    return ["http://localhost:3000", "http://54.66.242.6:3000"]
+    origins = {origin.strip() for origin in os.environ.get("CORS_ORIGINS", "").split(",") if origin.strip()}
+    if "*" in origins:
+        raise ValueError("CORS_ORIGINS must contain explicit origins, not a wildcard")
+    return origins
 
-CORS(app, origins=get_allowed_origins())
+
+app.config["ALLOWED_ORIGINS"] = get_allowed_origins()
+
+
+def api_error(status, code, message):
+    return jsonify({"error": {
+        "code": code, "message": message, "details": [], "requestId": g.request_id,
+    }}), status
+
+
+@app.before_request
+def prepare_request():
+    g.request_id = str(uuid4())
+    origin = request.headers.get("Origin")
+    if origin and origin not in app.config["ALLOWED_ORIGINS"]:
+        return api_error(403, "FORBIDDEN", "Origin is not allowed.")
+
+
+@app.after_request
+def response_headers(response):
+    response.headers["X-Request-Id"] = g.request_id
+    origin = request.headers.get("Origin")
+    response.vary.add("Origin")
+    if origin and origin in app.config["ALLOWED_ORIGINS"]:
+        response.headers["Access-Control-Allow-Origin"] = origin
+        response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+        response.headers["Access-Control-Allow-Headers"] = "Content-Type"
+        response.headers["Access-Control-Expose-Headers"] = "X-Request-Id"
+    return response
+
+
+@app.errorhandler(RequestEntityTooLarge)
+def payload_too_large(_error):
+    return api_error(413, "PAYLOAD_TOO_LARGE", "Maximum request size is 5 MiB.")
+
+
+@app.errorhandler(HTTPException)
+def http_error(error):
+    codes = {400: "BAD_REQUEST", 404: "NOT_FOUND", 405: "METHOD_NOT_ALLOWED"}
+    return api_error(error.code, codes.get(error.code, "HTTP_ERROR"), error.name)
+
+
+@app.errorhandler(Exception)
+def unexpected_error(_error):
+    # Never include exception messages, tracebacks, filenames, or resume text.
+    app.logger.error("Unhandled ML service error requestId=%s", g.request_id)
+    return api_error(500, "INTERNAL_ERROR", "An unexpected error occurred.")
 
 # Job role skill requirements
 JOB_ROLES = {
@@ -164,54 +213,55 @@ def health():
 
 @app.route("/analyze", methods=["POST"])
 def analyze_resume():
+    if "resume" not in request.files:
+        return api_error(400, "FILE_REQUIRED", "No resume file uploaded.")
+    file = request.files["resume"]
+    if not file.filename:
+        return api_error(400, "FILE_REQUIRED", "No file selected.")
+    if file.stream.read(5) != b"%PDF-":
+        return api_error(400, "FILE_NOT_PDF", "Only PDF files are supported.")
+    file.stream.seek(0)
     try:
-        if "resume" not in request.files:
-            return jsonify({"error": "No resume file uploaded"}), 400
+        text = parse_pdf(file.stream.read())
+    except ParseFailure as error:
+        failures = {
+            "PARSE_TIMEOUT": (422, "PDF parsing exceeded 20 seconds."),
+            "PDF_ENCRYPTED": (422, "Encrypted PDFs are not supported."),
+            "INVALID_PDF": (422, "Could not parse the PDF."),
+            "PARSER_BUSY": (503, "The PDF parser is busy. Try again later."),
+        }
+        status, message = failures[error.code]
+        return api_error(status, error.code, message)
+    if not text:
+        return api_error(422, "PDF_NO_TEXT", "Could not extract text from PDF.")
+    # Analysis
+    skills = extract_skills(text)
+    ats_score = calculate_ats_score(text, skills)
+    skill_score = calculate_skill_score(skills)
+    job_matches = calculate_job_match(skills)
+    suggestions = generate_suggestions(skills, ats_score, text)
+    email = extract_email(text)
+    phone = extract_phone(text)
+    experience_years = extract_experience_years(text)
 
-        file = request.files["resume"]
+    return jsonify({
+        "success": True,
+        "data": {
+            "skills": skills,
+            "skill_score": skill_score,
+            "ats_score": ats_score,
+            "job_matches": job_matches,
+            "suggestions": suggestions,
+            "contact": {
+                "email": email,
+                "phone": phone
+            },
+            "experience_years": experience_years,
+            "word_count": len(text.split())
+        }
+    })
 
-        if file.filename == "":
-            return jsonify({"error": "No file selected"}), 400
-
-        if not file.filename.endswith(".pdf"):
-            return jsonify({"error": "Only PDF files are supported"}), 400
-
-        # Extract text
-        text = extract_text_from_pdf(file)
-
-        if not text:
-            return jsonify({"error": "Could not extract text from PDF"}), 400
-
-        # Analysis
-        skills = extract_skills(text)
-        ats_score = calculate_ats_score(text, skills)
-        skill_score = calculate_skill_score(skills)
-        job_matches = calculate_job_match(skills)
-        suggestions = generate_suggestions(skills, ats_score, text)
-        email = extract_email(text)
-        phone = extract_phone(text)
-        experience_years = extract_experience_years(text)
-
-        return jsonify({
-            "success": True,
-            "data": {
-                "skills": skills,
-                "skill_score": skill_score,
-                "ats_score": ats_score,
-                "job_matches": job_matches,
-                "suggestions": suggestions,
-                "contact": {
-                    "email": email,
-                    "phone": phone
-                },
-                "experience_years": experience_years,
-                "word_count": len(text.split())
-            }
-        })
-
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
-    app.run(debug=True, port=port)
+    app.run(port=port)

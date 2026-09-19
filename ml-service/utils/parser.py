@@ -1,14 +1,38 @@
 import pdfplumber
 import re
 
+MAX_PAGES = 30
+MAX_CHARACTERS = 200_000
+
+
 def extract_text_from_pdf(file):
-    text = ""
+    from itertools import islice
+    from pdfminer.pdfdocument import PDFEncryptionError
+    from pdfminer.pdfpage import PDFPage
+    from pdfplumber.page import Page
+
+    chunks = []
+    remaining = MAX_CHARACTERS
     with pdfplumber.open(file) as pdf:
-        for page in pdf.pages:
-            page_text = page.extract_text()
+        # Keep close() from lazily materializing every page after our capped loop.
+        pdf._pages = []
+        # Reject encryption even when the PDF accepts an empty password.
+        if pdf.doc.encryption:
+            raise PDFEncryptionError("Encrypted PDFs are not supported")
+        # pdf.pages materializes all pages. Iterate lazily to stop at page 30.
+        for number, raw_page in enumerate(islice(PDFPage.create_pages(pdf.doc), MAX_PAGES), 1):
+            page = Page(pdf, raw_page, page_number=number)
+            try:
+                page_text = page.extract_text() or ""
+            finally:
+                page.close()
             if page_text:
-                text += page_text + "\n"
-    return text.strip()
+                chunk = (page_text + "\n")[:remaining]
+                chunks.append(chunk)
+                remaining -= len(chunk)
+            if remaining == 0:
+                break
+    return "".join(chunks).strip()
 
 def extract_skills(text):
     skill_keywords = [

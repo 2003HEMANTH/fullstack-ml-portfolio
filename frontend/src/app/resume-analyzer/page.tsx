@@ -44,7 +44,7 @@ export default function ResumeAnalyzerPage() {
       if (data.success) {
         setResult(data.data);
       } else {
-        setError(data.error || "Analysis failed");
+        setError(data.error?.message || "Analysis failed");
       }
     } catch (err) {
       setError("Failed to connect to ML service");

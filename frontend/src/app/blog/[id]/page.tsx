@@ -93,7 +93,7 @@ export default function BlogPostPage() {
         {/* Divider */}
         <div className="border-t border-white/10 mb-8" />
 
-        {/* Content */}
+        {/* HTML is sanitized by backend/utils/sanitize.js on write; legacy posts require sanitizeExistingBlogs.js. */}
         <div
           className="prose prose-invert prose-blue max-w-none text-gray-300 leading-relaxed"
           dangerouslySetInnerHTML={{ __html: blog.content }}

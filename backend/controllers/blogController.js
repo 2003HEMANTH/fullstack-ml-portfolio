@@ -1,5 +1,6 @@
 const Blog = require("../models/Blog");
 const { NotFoundError } = require("../utils/errors");
+const { sanitizeBlogContent } = require("../utils/sanitize");
 
 // GET all blogs
 const getBlogs = async (req, res) => {
@@ -20,8 +21,10 @@ const getBlog = async (req, res) => {
 
 // CREATE blog (admin only)
 const createBlog = async (req, res) => {
+    const content = sanitizeBlogContent(req.body.content);
     const blog = await Blog.create({
         ...req.body,
+        content,
         author: req.user.id,
     });
     res.status(201).json({ success: true, blog });
@@ -29,9 +32,13 @@ const createBlog = async (req, res) => {
 
 // UPDATE blog (admin only)
 const updateBlog = async (req, res) => {
+    const updateData = { ...req.body };
+    if (updateData.content !== undefined) {
+        updateData.content = sanitizeBlogContent(updateData.content);
+    }
     const blog = await Blog.findByIdAndUpdate(
         req.params.id,
-        req.body,
+        updateData,
         { new: true },
     );
     if (!blog) {
@@ -49,4 +56,4 @@ const deleteBlog = async (req, res) => {
     res.status(204).end();
 };
 
-module.exports = { getBlogs, getBlog, createBlog, updateBlog, deleteBlog };
+module.exports = { getBlogs, getBlog, createBlog, updateBlog, deleteBlog };

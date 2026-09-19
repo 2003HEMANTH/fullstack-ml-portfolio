@@ -18,3 +18,8 @@ Thumbs.db
 *.pem
 *.pdf
 .env.local
+
+# Local status and environment files
+status.txt
+*.env
+!.env.example

@@ -66,6 +66,11 @@ export function mlErrorMessage(error: unknown): string {
     AI_NOT_CONFIGURED: "AI analysis is not configured on the server.",
     AI_INVALID_RESPONSE: "The AI returned an invalid response. Try again.",
     AI_UNAVAILABLE: "AI analysis is temporarily unavailable. Try again shortly.",
+    AI_AUTH_FAILED: "The Groq API key is invalid. Update it in Render.",
+    AI_PERMISSION_DENIED: "The Groq account cannot access the configured model.",
+    AI_RATE_LIMITED: "The Groq usage limit was reached. Try again later.",
+    AI_MODEL_ERROR: "The configured Groq model is unavailable.",
+    AI_CONNECTION_ERROR: "Groq could not be reached. Try again shortly.",
     JOB_DESCRIPTION_TOO_LONG: "Job description must be 20,000 characters or fewer.",
   };
   return messages[normalized.code] || errorMessage(normalized);

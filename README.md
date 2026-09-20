@@ -42,6 +42,8 @@ placeholders or non-secret defaults. Never commit real `.env` files.
 **ML service**
 
 - `CORS_ORIGINS=https://your-site.vercel.app,http://localhost:3000`.
+- Required: `GROQ_API_KEY`, stored only in local or Render environment settings.
+- Optional: `GROQ_MODEL`; defaults to `llama-3.3-70b-versatile`.
 - `PORT` is supplied by Render; local default is `8000`.
 - No wildcard origins. With an empty allowlist, browser-origin requests are rejected.
 
@@ -124,7 +126,7 @@ not an operating-system sandbox or a hard memory limit on decompressed PDFs.
 Set `CORS_ORIGINS` to comma-separated, exact frontend origins. An empty setting
 allows no browser origins; `*` is rejected. Errors use the backend envelope
 `{ error: { code, message, details, requestId } }` with an `X-Request-Id` header.
-Neither uploaded bytes nor extracted text are written to disk or logged.
+Neither uploaded bytes nor extracted text are written to disk or logged. Resume text and an optional job description are sent to Groq for AI analysis; the portfolio service does not persist them. Job descriptions are limited to 20,000 characters, and provider failures use structured `AI_*` errors.
 
 Run the ML tests with the service dependencies installed:
 

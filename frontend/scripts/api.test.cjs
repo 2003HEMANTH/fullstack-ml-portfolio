@@ -42,6 +42,10 @@ test("each ML failure has actionable wording and a 90 second timeout", () => {
     [400, "FILE_NOT_PDF", "That file isn't a PDF."],
     [422, "PARSE_TIMEOUT", "That PDF took too long to read. Try a simpler layout."],
     [422, "PDF_ENCRYPTED", "This PDF is password-protected. Remove the password."],
+    [503, "AI_NOT_CONFIGURED", "AI analysis is not configured on the server."],
+    [502, "AI_INVALID_RESPONSE", "The AI returned an invalid response. Try again."],
+    [503, "AI_UNAVAILABLE", "AI analysis is temporarily unavailable. Try again shortly."],
+    [422, "JOB_DESCRIPTION_TOO_LONG", "Job description must be 20,000 characters or fewer."],
   ]) assert.equal(mlErrorMessage(failure(status, code)), expected);
   for (const code of ["RESUME_NOT_TEXT", "PDF_NO_TEXT"]) assert.match(mlErrorMessage(failure(422, code)), /scanned image/);
   assert.equal(mlApi.defaults.timeout, 90_000);

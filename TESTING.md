@@ -18,7 +18,7 @@ Edit `backend/.env`: fill in the Atlas `MONGO_URI`, a long random `JWT_SECRET`,
 `ADMIN_EMAIL`, and `ADMIN_PASSWORD`. Use `NODE_ENV=development` and
 `CLIENT_URL=http://localhost:3000`. Allow your current IP in Atlas Network Access.
 Keep `EMAIL_USER` and `EMAIL_PASS` blank; email setup is deferred. The frontend
-and ML example URLs already match the three local ports.
+and ML example URLs already match the three local ports. In `ml-service/.env`, set your private `GROQ_API_KEY`; never commit it.
 
 Install dependencies, each in its service directory:
 
@@ -141,7 +141,8 @@ or wait 15 minutes. Do not use repeated tests to lock out your production admin.
 
 ## 6. Resume analyzer
 
-- Upload a normal text-based PDF. Expect scores, skills, and suggestions.
+- Upload a normal text-based PDF. Expect an AI ATS score, strengths, weaknesses, section feedback, suggestions, and bullet rewrites.
+- Paste a job description before upload. Expect a JD match score plus matched and missing keywords.
 - Upload an encrypted PDF. Expect the password-protection message.
 - Upload a scanned/image-only PDF. Expect the text-based export instructions.
 - Upload a file larger than 5 MiB. Expect the size message.

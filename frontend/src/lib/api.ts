@@ -63,6 +63,10 @@ export function mlErrorMessage(error: unknown): string {
     PARSE_TIMEOUT: "That PDF took too long to read. Try a simpler layout.",
     PDF_ENCRYPTED: "This PDF is password-protected. Remove the password.",
     NETWORK_ERROR: "The analyzer is unreachable. Try again shortly.",
+    AI_NOT_CONFIGURED: "AI analysis is not configured on the server.",
+    AI_INVALID_RESPONSE: "The AI returned an invalid response. Try again.",
+    AI_UNAVAILABLE: "AI analysis is temporarily unavailable. Try again shortly.",
+    JOB_DESCRIPTION_TOO_LONG: "Job description must be 20,000 characters or fewer.",
   };
   return messages[normalized.code] || errorMessage(normalized);
 }

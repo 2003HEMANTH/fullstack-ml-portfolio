@@ -71,6 +71,11 @@ def hanging_worker(_payload, _sender):
 class UploadTests(unittest.TestCase):
     def setUp(self):
         self.client = service.app.test_client()
+        self.ai_patcher = patch.object(service, 'analyze_with_groq', return_value={'ats_score': 80})
+        self.ai = self.ai_patcher.start()
+
+    def tearDown(self):
+        self.ai_patcher.stop()
 
     def upload(self, payload, name="resume.pdf", **kwargs):
         boundary = "upload-test-boundary"
@@ -88,6 +93,35 @@ class UploadTests(unittest.TestCase):
         UUID(error["requestId"])
         self.assertEqual(response.headers["X-Request-Id"], error["requestId"])
 
+    def test_ai_analysis_receives_text_and_job_description(self):
+        boundary = "ai-test-boundary"
+        pdf = make_pdf()
+        body = (f'--{boundary}\r\nContent-Disposition: form-data; name="resume"; filename="resume.pdf"\r\nContent-Type: application/pdf\r\n\r\n'.encode()
+                + pdf + f'\r\n--{boundary}\r\nContent-Disposition: form-data; name="job_description"\r\n\r\nPython developer\r\n--{boundary}--\r\n'.encode())
+        with patch.object(service, "parse_pdf", return_value="Private resume"):
+            response = self.client.post("/analyze", data=body, content_type=f"multipart/form-data; boundary={boundary}")
+        self.assertEqual(response.status_code, 200)
+        self.ai.assert_called_once_with("Private resume", "Python developer")
+        self.assertTrue(response.json["data"]["basic_info"]["has_jd"])
+
+    def test_job_description_limit(self):
+        response = self.client.post("/analyze", data={
+            "resume": (BytesIO(make_pdf()), "resume.pdf"),
+            "job_description": "x" * 20_001,
+        })
+        self.check_error(response, 422, "JOB_DESCRIPTION_TOO_LONG")
+        self.ai.assert_not_called()
+
+    def test_ai_failures_use_error_envelope_and_do_not_leak_text(self):
+        for code, status in (("AI_NOT_CONFIGURED", 503), ("AI_INVALID_RESPONSE", 502), ("AI_UNAVAILABLE", 503)):
+            with self.subTest(code=code):
+                self.ai.reset_mock()
+                self.ai.side_effect = service.AnalysisFailure(code)
+                with patch.object(service, "parse_pdf", return_value="PRIVATE_RESUME_TEXT"):
+                    response = self.upload(make_pdf())
+                self.check_error(response, status, code)
+                self.assertNotIn("PRIVATE_RESUME_TEXT", response.get_data(as_text=True))
+        self.ai.side_effect = None
     def test_large_upload_is_json_413(self):
         self.check_error(self.upload(b"x" * (6 * 1024 * 1024)), 413, "PAYLOAD_TOO_LARGE")
 
@@ -105,7 +139,7 @@ class UploadTests(unittest.TestCase):
     def test_valid_pdf_real_parser(self):
         response = self.upload(make_pdf())
         self.assertEqual(response.status_code, 200)
-        self.assertIn("python", response.json["data"]["skills"])
+        self.assertIn("python", response.json["data"]["basic_info"]["skills"])
 
     def test_encrypted_pdfs_real_parser(self):
         for password in ("secret", ""):

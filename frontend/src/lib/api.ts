@@ -41,7 +41,7 @@ export function errorMessage(error: unknown): string {
 }
 
 function createClient(baseURL: string | undefined, withCredentials: boolean) {
-  const client = axios.create({ baseURL: baseURL?.replace(/\/+$/, ""), withCredentials, timeout: 90_000 });
+  const client = axios.create({ baseURL: baseURL?.trim().replace(/\/+$/, ""), withCredentials, timeout: 90_000 });
   client.interceptors.request.use((config) => {
     if (!config.baseURL) throw new ApiError("CONFIGURATION_ERROR", "The service URL is not configured.");
     return config;

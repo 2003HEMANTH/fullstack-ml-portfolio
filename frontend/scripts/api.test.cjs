@@ -6,7 +6,7 @@ const Module = require("node:module");
 const ts = require("typescript");
 const axios = require("axios");
 process.env.NEXT_PUBLIC_API_URL = "https://api.example/api";
-process.env.NEXT_PUBLIC_ML_URL = "https://ml.example";
+process.env.NEXT_PUBLIC_ML_URL = " https://ml.example/\n";
 // Compile the actual TypeScript module using the existing compiler, not a copy.
 const filename = path.resolve(__dirname, "../src/lib/api.ts");
 const compiled = ts.transpileModule(fs.readFileSync(filename, "utf8"), {
@@ -49,6 +49,7 @@ test("each ML failure has actionable wording and a 90 second timeout", () => {
   ]) assert.equal(mlErrorMessage(failure(status, code)), expected);
   for (const code of ["RESUME_NOT_TEXT", "PDF_NO_TEXT"]) assert.match(mlErrorMessage(failure(422, code)), /scanned image/);
   assert.equal(mlApi.defaults.timeout, 90_000);
+  assert.equal(mlApi.defaults.baseURL, "https://ml.example");
 });
 test("ML uploads keep multipart boundary generation available", async () => {
   mlApi.defaults.adapter = async (config) => {

@@ -118,6 +118,11 @@ def analyze_resume():
             "AI_NOT_CONFIGURED": (503, "AI analysis is not configured."),
             "AI_INVALID_RESPONSE": (502, "The AI returned an invalid response. Try again."),
             "AI_UNAVAILABLE": (503, "AI analysis is temporarily unavailable. Try again shortly."),
+            "AI_AUTH_FAILED": (503, "The Groq API key is invalid. Update it in the service environment."),
+            "AI_PERMISSION_DENIED": (503, "The Groq account cannot access the configured model."),
+            "AI_RATE_LIMITED": (429, "The AI usage limit was reached. Try again later."),
+            "AI_MODEL_ERROR": (503, "The configured AI model is unavailable."),
+            "AI_CONNECTION_ERROR": (503, "The AI provider could not be reached. Try again shortly."),
         }
         status, message = failures[error.code]
         return api_error(status, error.code, message)

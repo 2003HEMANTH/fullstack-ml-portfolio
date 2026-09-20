@@ -2,7 +2,10 @@
 import json
 import os
 
-from groq import Groq
+from groq import (
+    APIConnectionError, APITimeoutError, AuthenticationError, BadRequestError,
+    Groq, NotFoundError, PermissionDeniedError, RateLimitError,
+)
 
 MODEL = os.environ.get("GROQ_MODEL", "llama-3.3-70b-versatile")
 MAX_JOB_DESCRIPTION_CHARS = 20_000
@@ -119,6 +122,16 @@ def analyze_with_groq(resume_text, job_description=None):
         raise
     except (json.JSONDecodeError, AttributeError, IndexError, TypeError):
         raise AnalysisFailure("AI_INVALID_RESPONSE") from None
+    except AuthenticationError:
+        raise AnalysisFailure("AI_AUTH_FAILED") from None
+    except PermissionDeniedError:
+        raise AnalysisFailure("AI_PERMISSION_DENIED") from None
+    except RateLimitError:
+        raise AnalysisFailure("AI_RATE_LIMITED") from None
+    except (BadRequestError, NotFoundError):
+        raise AnalysisFailure("AI_MODEL_ERROR") from None
+    except (APIConnectionError, APITimeoutError):
+        raise AnalysisFailure("AI_CONNECTION_ERROR") from None
     except Exception:
         # Provider errors can include request diagnostics. Never log them.
         raise AnalysisFailure("AI_UNAVAILABLE") from None

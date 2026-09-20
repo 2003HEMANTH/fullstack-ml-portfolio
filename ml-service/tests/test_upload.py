@@ -113,7 +113,7 @@ class UploadTests(unittest.TestCase):
         self.ai.assert_not_called()
 
     def test_ai_failures_use_error_envelope_and_do_not_leak_text(self):
-        for code, status in (("AI_NOT_CONFIGURED", 503), ("AI_INVALID_RESPONSE", 502), ("AI_UNAVAILABLE", 503)):
+        for code, status in (("AI_NOT_CONFIGURED", 503), ("AI_INVALID_RESPONSE", 502), ("AI_UNAVAILABLE", 503), ("AI_AUTH_FAILED", 503), ("AI_PERMISSION_DENIED", 503), ("AI_RATE_LIMITED", 429), ("AI_MODEL_ERROR", 503), ("AI_CONNECTION_ERROR", 503)):
             with self.subTest(code=code):
                 self.ai.reset_mock()
                 self.ai.side_effect = service.AnalysisFailure(code)

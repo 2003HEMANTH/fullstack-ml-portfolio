@@ -43,7 +43,7 @@ placeholders or non-secret defaults. Never commit real `.env` files.
 
 - `CORS_ORIGINS=https://your-site.vercel.app,http://localhost:3000`.
 - Required: `GROQ_API_KEY`, stored only in local or Render environment settings.
-- Optional: `GROQ_MODEL`; defaults to `llama-3.3-70b-versatile`.
+- Optional: `GROQ_MODEL`; defaults to `openai/gpt-oss-20b`.
 - `PORT` is supplied by Render; local default is `8000`.
 - No wildcard origins. With an empty allowlist, browser-origin requests are rejected.
 

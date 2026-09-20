@@ -1,7 +1,7 @@
 const http = require("http");
 
 // Ensure CLIENT_URL is set before importing app
-process.env.CLIENT_URL = "http://localhost:3000,https://myportfolio.vercel.app";
+process.env.CLIENT_URL = "http://localhost:3000/,https://myportfolio.vercel.app/";
 
 const app = require("../server");
 
@@ -60,7 +60,7 @@ async function runTests() {
     }
 
     try {
-        // ── 1. Helmet defaults & cross-origin policy ─────────────────
+        // â”€â”€ 1. Helmet defaults & cross-origin policy â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         {
             const res = await request(server, "/");
             assert("Helmet sets X-Content-Type-Options: nosniff", res.headers["x-content-type-options"] === "nosniff");
@@ -72,7 +72,7 @@ async function runTests() {
             assert("Helmet sets X-DNS-Prefetch-Control", res.headers["x-dns-prefetch-control"] === "off");
         }
 
-        // ── 2. CORS allowlist vs unknown origin ──────────────────────
+        // â”€â”€ 2. CORS allowlist vs unknown origin â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         {
             // Unknown origin -> rejected with 403
             const rejectedRes = await request(server, "/", {
@@ -87,7 +87,7 @@ async function runTests() {
                 headers: { Origin: "http://localhost:3000" },
             });
             assert(
-                "Allowed origin has Access-Control-Allow-Origin header",
+                "Configured trailing slash is normalized for browser origin",
                 allowedRes.headers["access-control-allow-origin"] === "http://localhost:3000"
             );
             assert(
@@ -96,7 +96,7 @@ async function runTests() {
             );
         }
 
-        // ── 3. 200KB JSON body -> 413 Payload Too Large ─────────────
+        // â”€â”€ 3. 200KB JSON body -> 413 Payload Too Large â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         {
             // Create a payload > 100KB (e.g. ~200KB)
             const largeData = "x".repeat(200 * 1024);
@@ -111,7 +111,7 @@ async function runTests() {
             assert("413 requestId matches X-Request-Id header", res.body?.error?.requestId === res.headers["x-request-id"]);
         }
 
-        // ── 4. Rate Limiting: 6 rapid login attempts ─────────────────
+        // â”€â”€ 4. Rate Limiting: 6 rapid login attempts â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         {
             let sixthRes = null;
             for (let i = 1; i <= 6; i++) {

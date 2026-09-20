@@ -16,8 +16,8 @@ const app = express();
 // Required on Render / reverse proxies for accurate client IP in rate limiting & TLS termination
 app.set("trust proxy", 1);
 
-// ── Middleware (order matters) ────────────────────────────────────
-// 1. Request ID (FIRST — every request gets a UUID and X-Request-Id header)
+// â”€â”€ Middleware (order matters) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// 1. Request ID (FIRST â€” every request gets a UUID and X-Request-Id header)
 app.use(requestId);
 
 // 2. Helmet security headers with cross-origin resource policy for frontend
@@ -31,7 +31,7 @@ app.use(
 const getAllowedOrigins = () =>
     (process.env.CLIENT_URL || "")
         .split(",")
-        .map((origin) => origin.trim())
+        .map((origin) => origin.trim().replace(/\/+$/, ""))
         .filter(Boolean);
 
 app.use(
@@ -69,7 +69,7 @@ app.use((req, _res, next) => {
 // 8. General rate limiter for all /api endpoints (100 per 15 min per IP)
 app.use("/api", apiLimiter);
 
-// ── Routes ───────────────────────────────────────────────────────
+// â”€â”€ Routes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/projects", require("./routes/projectRoutes"));
 app.use("/api/blogs", require("./routes/blogRoutes"));
@@ -79,18 +79,18 @@ app.get("/healthz", (_req, res) => res.status(200).type("text/plain").send("ok")
 
 // Health check
 app.get("/", (_req, res) => {
-    res.json({ message: "Portfolio API Running 🚀" });
+    res.json({ message: "Portfolio API Running ðŸš€" });
 });
 
-// ── 404 catch-all (after all routes, before error handler) ───────
+// â”€â”€ 404 catch-all (after all routes, before error handler) â”€â”€â”€â”€â”€â”€â”€
 app.use((req, _res, next) => {
     next(new NotFoundError(`Cannot ${req.method} ${req.originalUrl}`));
 });
 
-// ── Error handler (LAST) ─────────────────────────────────────────
+// â”€â”€ Error handler (LAST) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.use(errorHandler);
 
-// ── Server startup & Graceful Shutdown ────────────────────────────
+// â”€â”€ Server startup & Graceful Shutdown â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const PORT = process.env.PORT || 5000;
 
 if (require.main === module) {

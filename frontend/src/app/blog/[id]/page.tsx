@@ -15,11 +15,11 @@ export default async function BlogPostPage({ params }: { params: { id: string } 
     throw error;
   }
   return (
-    <main className="min-h-screen bg-gradient-to-br from-black via-blue-950 to-black text-white px-6 py-28">
+    <main className="min-h-screen bg-gradient-to-br from-black via-violet-950 to-black text-white px-6 py-28">
       <div className="max-w-3xl mx-auto">
 
         {/* Back Button */}
-        <Link href="/blog" className="mb-8 inline-block text-gray-400 hover:text-blue-400">Back to Blog</Link>
+        <Link href="/blog" className="mb-8 inline-block text-gray-400 hover:text-purple-300">Back to Blog</Link>
 
         {/* Cover Image */}
         {blog.coverImage && (
@@ -44,7 +44,7 @@ export default async function BlogPostPage({ params }: { params: { id: string } 
           {blog.tags.map((tag, index) => (
             <span
               key={index}
-              className="px-3 py-1 bg-blue-500/20 text-blue-300 text-xs rounded-full border border-blue-500/30"
+              className="px-3 py-1 bg-purple-500/20 text-purple-300 text-xs rounded-full border border-purple-500/30"
             >
               #{tag}
             </span>

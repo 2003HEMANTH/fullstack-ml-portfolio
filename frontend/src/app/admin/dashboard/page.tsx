@@ -1,13 +1,15 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import api from "@/lib/api";
+import api, { errorMessage } from "@/lib/api";
+import ApiErrorNotice from "@/components/ApiErrorNotice";
 import { Project } from "@/types";
 
 export default function AdminDashboard() {
   const router = useRouter();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({
@@ -25,24 +27,28 @@ export default function AdminDashboard() {
   }, []);
 
   const fetchProjects = async () => {
+    setError("");
     try {
       const res = await api.get("/projects");
       setProjects(res.data.projects);
     } catch (error) {
-      console.error("Failed to fetch projects", error);
+      setError(errorMessage(error));
     } finally {
       setLoading(false);
     }
   };
 
   const handleLogout = async () => {
-    await api.post("/auth/logout");
-    router.push("/admin");
+    try {
+      await api.post("/auth/logout");
+      router.replace("/admin");
+    } catch (failure) { setError(errorMessage(failure)); }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
+    setError("");
     try {
       await api.post("/projects", {
         ...form,
@@ -60,7 +66,7 @@ export default function AdminDashboard() {
       setShowForm(false);
       fetchProjects();
     } catch (error) {
-      console.error("Failed to create project", error);
+      setError(errorMessage(error));
     } finally {
       setSubmitting(false);
     }
@@ -68,11 +74,12 @@ export default function AdminDashboard() {
 
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this project?")) return;
+    setError("");
     try {
       await api.delete(`/projects/${id}`);
       fetchProjects();
     } catch (error) {
-      console.error("Failed to delete project", error);
+      setError(errorMessage(error));
     }
   };
 
@@ -86,6 +93,7 @@ export default function AdminDashboard() {
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-black via-blue-950 to-black text-white px-10 py-28">
+      <ApiErrorNotice message={error} />
       {/* Header */}
       <div className="flex justify-between items-center mb-10 max-w-7xl mx-auto">
         <div>
@@ -238,6 +246,7 @@ export default function AdminDashboard() {
         </div>
       )}
 
+      {!error && projects.length === 0 && <p className="text-center text-gray-400">No projects yet. Create your first project above.</p>}
       {/* Projects List */}
       <div className="max-w-7xl mx-auto">
         <h2 className="text-2xl font-bold text-white mb-6">All Projects</h2>

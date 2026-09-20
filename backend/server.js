@@ -1,15 +1,15 @@
+require("dotenv").config();
 const express = require("express");
 const helmet = require("helmet");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-const mongoSanitize = require("express-mongo-sanitize");
+const { sanitizeMongo, parseQuery } = require("./middleware/sanitizeMongo");
 const mongoose = require("mongoose");
 const connectDB = require("./config/db");
 const requestId = require("./middleware/requestId");
 const errorHandler = require("./middleware/errorHandler");
 const { apiLimiter } = require("./middleware/rateLimiter");
 const { NotFoundError, ForbiddenError } = require("./utils/errors");
-require("dotenv").config();
 
 const app = express();
 
@@ -57,19 +57,8 @@ app.use(express.json({ limit: "100kb" }));
 // 5. Cookie Parser
 app.use(cookieParser());
 
-// 6. Express 5 compatibility for express-mongo-sanitize (req.query is a getter)
-app.use((req, _res, next) => {
-    Object.defineProperty(req, "query", {
-        value: { ...req.query },
-        writable: true,
-        configurable: true,
-        enumerable: true,
-    });
-    next();
-});
-
-// 7. Mongo Sanitize (strip $ and . from req.body/params/query)
-app.use(mongoSanitize());
+app.set("query parser", parseQuery);
+app.use(sanitizeMongo);
 
 // Debug logger
 app.use((req, _res, next) => {
@@ -85,6 +74,8 @@ app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/projects", require("./routes/projectRoutes"));
 app.use("/api/blogs", require("./routes/blogRoutes"));
 app.use("/api/contact", require("./routes/contactRoutes"));
+
+app.get("/healthz", (_req, res) => res.status(200).type("text/plain").send("ok"));
 
 // Health check
 app.get("/", (_req, res) => {
@@ -104,7 +95,7 @@ const PORT = process.env.PORT || 5000;
 
 if (require.main === module) {
     connectDB();
-    const server = app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+    const server = app.listen(PORT, "0.0.0.0", () => console.log(`Server running on port ${PORT}`));
 
     const gracefulShutdown = (signal) => {
         console.log(`Received ${signal}. Starting graceful shutdown...`);

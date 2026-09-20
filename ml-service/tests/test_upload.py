@@ -170,6 +170,12 @@ class UploadTests(unittest.TestCase):
         self.assertNotIn(secret, response.get_data(as_text=True))
         self.assertNotIn(secret, " ".join(logs.output))
 
+    def test_healthz_is_public(self):
+        response = self.client.get("/healthz")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json["status"], "ok")
+        UUID(response.headers["X-Request-Id"])
+
     def test_404_and_405_envelopes(self):
         self.check_error(self.client.get("/missing"), 404, "NOT_FOUND")
         self.check_error(self.client.get("/analyze"), 405, "METHOD_NOT_ALLOWED")

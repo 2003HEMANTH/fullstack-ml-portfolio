@@ -1,5 +1,6 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { mlApi, mlErrorMessage } from "@/lib/api";
 
 interface JobMatch {
   score: number;
@@ -24,9 +25,26 @@ export default function ResumeAnalyzerPage() {
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState("");
   const [dragging, setDragging] = useState(false);
+  const [waking, setWaking] = useState(false);
+  const uploadController = useRef<AbortController | null>(null);
+  const slowTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => {
+    const warmup = new AbortController();
+    // Warmup is best-effort; the upload reports any connection failure.
+    mlApi.get("/healthz", { signal: warmup.signal }).catch(() => {});
+    return () => {
+      warmup.abort(); uploadController.current?.abort();
+      if (slowTimer.current) clearTimeout(slowTimer.current);
+    };
+  }, []);
+
 
   const handleAnalyze = async () => {
     if (!file) return;
+    if (file.size > 5 * 1024 * 1024) { setError("File too large. Maximum 5MB."); return; }
+    setWaking(false);
+    slowTimer.current = setTimeout(() => setWaking(true), 5000);
+    uploadController.current = new AbortController();
     setLoading(true);
     setError("");
     setResult(null);
@@ -35,20 +53,13 @@ export default function ResumeAnalyzerPage() {
       const formData = new FormData();
       formData.append("resume", file);
 
-      const res = await fetch(`${process.env.NEXT_PUBLIC_ML_URL}/analyze`, {        method: "POST",
-        body: formData,
-      });
-
-      const data = await res.json();
-
-      if (data.success) {
-        setResult(data.data);
-      } else {
-        setError(data.error?.message || "Analysis failed");
-      }
-    } catch (err) {
-      setError("Failed to connect to ML service");
+      const { data } = await mlApi.post<{ success: boolean; data: AnalysisResult }>("/analyze", formData, { signal: uploadController.current.signal });
+      setResult(data.data);
+    } catch (err: unknown) {
+      setError(mlErrorMessage(err));
     } finally {
+      if (slowTimer.current) clearTimeout(slowTimer.current);
+      setWaking(false);
       setLoading(false);
     }
   };
@@ -86,6 +97,7 @@ export default function ResumeAnalyzerPage() {
           </p>
         </div>
 
+        {loading && <p role="status" className="mb-6 text-center text-purple-300">{waking ? "Waking up the analyzer — the first request can take up to a minute." : "Analyzing your resume..."}</p>}
         {/* Upload Section */}
         {!result && (
           <div className="max-w-2xl mx-auto mb-8">
@@ -141,8 +153,8 @@ export default function ResumeAnalyzerPage() {
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-3">
-                  <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  Analyzing Resume...
+                  {!waking && <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />}
+                  {waking ? "Waiting for the analyzer..." : "Analyzing Resume..."}
                 </span>
               ) : (
                 "Analyze Resume"

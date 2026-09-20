@@ -370,7 +370,7 @@ export default function Home() {
         <div className="absolute top-0 inset-x-0 h-px" style={{ background: `linear-gradient(to right, transparent, ${THEME.slateIndigo}25, transparent)` }} />
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div>
-            <p className="text-xs font-mono tracking-widest uppercase mb-4" style={{ color: THEME.slateIndigo }}>// About Me</p>
+            <p className="text-xs font-mono tracking-widest uppercase mb-4" style={{ color: THEME.slateIndigo }}>{"// About Me"}</p>
             <h2 className="text-5xl font-black leading-tight mb-6">
               <span className="text-white">Building at the</span><br />
               <span className="bg-clip-text text-transparent" style={{ backgroundImage: `linear-gradient(135deg, ${THEME.royalViolet}, ${THEME.blueEnergy})` }}>intersection</span><br />
@@ -412,7 +412,7 @@ export default function Home() {
         <div className="max-w-6xl mx-auto">
           <div className="flex items-end justify-between mb-16">
             <div>
-              <p className="text-xs font-mono tracking-widest uppercase mb-3" style={{ color: THEME.slateIndigo }}>// Experience</p>
+              <p className="text-xs font-mono tracking-widest uppercase mb-3" style={{ color: THEME.slateIndigo }}>{"// Experience"}</p>
               <h2 className="text-5xl font-black text-white">Work History</h2>
             </div>
           </div>
@@ -472,7 +472,7 @@ export default function Home() {
         <div className="absolute top-0 inset-x-0 h-px" style={{ background: `linear-gradient(to right, transparent, ${THEME.blueEnergy}25, transparent)` }} />
         <div className="max-w-6xl mx-auto">
           <div className="mb-16">
-            <p className="text-xs font-mono tracking-widest uppercase mb-3" style={{ color: THEME.slateIndigo }}>// Skills</p>
+            <p className="text-xs font-mono tracking-widest uppercase mb-3" style={{ color: THEME.slateIndigo }}>{"// Skills"}</p>
             <h2 className="text-5xl font-black text-white">Tech Arsenal</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -507,7 +507,7 @@ export default function Home() {
         <div className="absolute top-0 inset-x-0 h-px" style={{ background: `linear-gradient(to right, transparent, ${THEME.slateIndigo}25, transparent)` }} />
         <div className="max-w-6xl mx-auto">
           <div className="mb-16">
-            <p className="text-xs font-mono tracking-widest uppercase mb-3" style={{ color: THEME.slateIndigo }}>// Education</p>
+            <p className="text-xs font-mono tracking-widest uppercase mb-3" style={{ color: THEME.slateIndigo }}>{"// Education"}</p>
             <h2 className="text-5xl font-black text-white">Academic Path</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -538,7 +538,7 @@ export default function Home() {
         <div className="absolute top-0 inset-x-0 h-px" style={{ background: `linear-gradient(to right, transparent, ${THEME.blueEnergy}25, transparent)` }} />
         <div className="max-w-6xl mx-auto">
           <div className="mb-16">
-            <p className="text-xs font-mono tracking-widest uppercase mb-3" style={{ color: THEME.slateIndigo }}>// Certifications</p>
+            <p className="text-xs font-mono tracking-widest uppercase mb-3" style={{ color: THEME.slateIndigo }}>{"// Certifications"}</p>
             <h2 className="text-5xl font-black text-white">Credentials</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -572,7 +572,7 @@ export default function Home() {
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[400px] opacity-15" style={{ background: `radial-gradient(ellipse at center, ${THEME.royalViolet} 0%, ${THEME.slateIndigo} 40%, transparent 70%)` }} />
         </div>
         <div className="relative z-10 max-w-3xl mx-auto">
-          <p className="text-xs font-mono tracking-widest uppercase mb-6" style={{ color: THEME.slateIndigo }}>// Lets Connect</p>
+          <p className="text-xs font-mono tracking-widest uppercase mb-6" style={{ color: THEME.slateIndigo }}>{"// Lets Connect"}</p>
           <h2 className="text-6xl md:text-7xl font-black leading-none mb-6">
             <span className="text-white">Lets work</span><br />
             <span className="bg-clip-text text-transparent" style={{ backgroundImage: mainGradient }}>together.</span>

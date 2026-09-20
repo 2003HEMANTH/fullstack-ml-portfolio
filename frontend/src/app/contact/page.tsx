@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import api from "@/lib/api";
+import api, { errorMessage } from "@/lib/api";
 
 export default function ContactPage() {
   const [form, setForm] = useState({
@@ -20,8 +20,8 @@ export default function ContactPage() {
       await api.post("/contact", form);
       setSuccess(true);
       setForm({ name: "", email: "", message: "" });
-    } catch (err: any) {
-      setError(err.response?.data?.message || "Failed to send message");
+    } catch (err: unknown) {
+      setError(errorMessage(err));
     } finally {
       setLoading(false);
     }

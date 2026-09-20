@@ -207,6 +207,7 @@ def generate_suggestions(skills, ats_score, text):
 
     return suggestions
 
+@app.route("/healthz", methods=["GET"])
 @app.route("/", methods=["GET"])
 def health():
     return jsonify({"message": "Resume Analyzer ML Service Running", "status": "ok"})
@@ -264,4 +265,4 @@ def analyze_resume():
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
-    app.run(port=port)
+    app.run(host="0.0.0.0", port=port)

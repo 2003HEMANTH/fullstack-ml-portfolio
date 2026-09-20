@@ -2,7 +2,8 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
-import api from "@/lib/api";
+import api, { errorMessage } from "@/lib/api";
+import ApiErrorNotice from "@/components/ApiErrorNotice";
 import { Blog } from "@/types";
 
 const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
@@ -12,6 +13,7 @@ export default function AdminBlogPage() {
   const router = useRouter();
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [content, setContent] = useState("");
@@ -28,11 +30,12 @@ export default function AdminBlogPage() {
   }, []);
 
   const fetchBlogs = async () => {
+    setError("");
     try {
       const res = await api.get("/blogs");
       setBlogs(res.data.blogs);
     } catch (error) {
-      console.error("Failed to fetch blogs", error);
+      setError(errorMessage(error));
     } finally {
       setLoading(false);
     }
@@ -41,6 +44,7 @@ export default function AdminBlogPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
+    setError("");
     try {
       await api.post("/blogs", {
         ...form,
@@ -58,7 +62,7 @@ export default function AdminBlogPage() {
       setShowForm(false);
       fetchBlogs();
     } catch (error) {
-      console.error("Failed to create blog", error);
+      setError(errorMessage(error));
     } finally {
       setSubmitting(false);
     }
@@ -66,11 +70,12 @@ export default function AdminBlogPage() {
 
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this blog?")) return;
+    setError("");
     try {
       await api.delete(`/blogs/${id}`);
       fetchBlogs();
     } catch (error) {
-      console.error("Failed to delete blog", error);
+      setError(errorMessage(error));
     }
   };
 
@@ -84,6 +89,7 @@ export default function AdminBlogPage() {
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-black via-blue-950 to-black text-white px-10 py-28">
+      <ApiErrorNotice message={error} />
       {/* Header */}
       <div className="flex justify-between items-center mb-10 max-w-7xl mx-auto">
         <div>
@@ -98,6 +104,7 @@ export default function AdminBlogPage() {
         </button>
       </div>
 
+      {!error && blogs.length === 0 && <p className="text-center text-gray-400">No published blogs yet. Create your first blog above.</p>}
       {/* Add Blog Button */}
       <div className="max-w-7xl mx-auto mb-6">
         <button

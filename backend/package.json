@@ -8,7 +8,7 @@
         "dev": "nodemon server.js",
         "seed:admin": "node scripts/seedAdmin.js",
         "sanitize:blogs": "node scripts/sanitizeExistingBlogs.js",
-        "test": "node scripts/verify-a2.js && node scripts/verify-a3.js && node --test scripts/verify-a4.js"
+        "test": "node scripts/verify-a2.js && node scripts/verify-a3.js && node --test scripts/verify-a4.js && node --test scripts/verify-ship.js"
     },
     "keywords": [],
     "author": "",
@@ -19,7 +19,6 @@
         "cors": "^2.8.6",
         "dotenv": "^17.3.1",
         "express": "^5.2.1",
-        "express-mongo-sanitize": "^2.2.0",
         "express-rate-limit": "^8.7.0",
         "helmet": "^8.3.0",
         "jsonwebtoken": "^9.0.3",

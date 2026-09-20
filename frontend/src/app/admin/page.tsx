@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import api from "@/lib/api";
+import api, { errorMessage } from "@/lib/api";
 
 export default function AdminLogin() {
   const router = useRouter();
@@ -17,8 +17,8 @@ export default function AdminLogin() {
     try {
       await api.post("/auth/login", { email, password });
       router.push("/admin/dashboard");
-    } catch (err: any) {
-      setError(err.response?.data?.message || "Login failed");
+    } catch (err: unknown) {
+      setError(errorMessage(err));
     } finally {
       setLoading(false);
     }

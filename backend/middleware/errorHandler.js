@@ -12,7 +12,7 @@ const errorHandler = (err, req, res, _next) => {
 
     // ── AppError (our own hierarchy) ──────────────────────────────
     if (err instanceof AppError) {
-        if (err instanceof ValidationError && err.details.some((d) => d.path === "id") && req.params && req.params.id) {
+        if (err instanceof ValidationError && err.details.some((d) => d.field === "id") && req.params && req.params.id) {
             return res.status(400).json({
                 error: {
                     code: "INVALID_ID",
@@ -72,7 +72,7 @@ const errorHandler = (err, req, res, _next) => {
     // ── Mongoose ValidationError ─────────────────────────────────
     if (err.name === "ValidationError" && err.errors) {
         const details = Object.values(err.errors).map((e) => ({
-            path: e.path,
+            field: e.path,
             message: e.message,
         }));
         return res.status(422).json({

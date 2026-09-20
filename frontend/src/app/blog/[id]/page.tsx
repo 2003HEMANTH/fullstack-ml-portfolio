@@ -1,64 +1,25 @@
-"use client";
-import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
-import api from "@/lib/api";
-import { Blog } from "@/types";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import api, { ApiError } from "@/lib/api";
+import type { Blog } from "@/types";
 
-export default function BlogPostPage() {
-  const { id } = useParams();
-  const router = useRouter();
-  const [blog, setBlog] = useState<Blog | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchBlog = async () => {
-      try {
-        const res = await api.get(`/blogs/${id}`);
-        setBlog(res.data.blog);
-      } catch (error) {
-        console.error("Failed to fetch blog", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchBlog();
-  }, [id]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-black via-blue-950 to-black flex items-center justify-center">
-        <div className="text-blue-400 text-2xl animate-pulse">Loading...</div>
-      </div>
-    );
+export const dynamic = "force-dynamic";
+export default async function BlogPostPage({ params }: { params: { id: string } }) {
+  if (!/^[a-f0-9]{24}$/i.test(params.id)) notFound();
+  let blog: Blog;
+  try {
+    const response = await api.get<{ blog: Blog }>(`/blogs/${params.id}`);
+    blog = response.data.blog;
+  } catch (error) {
+    if (error instanceof ApiError && (error.status === 404 || error.code === "INVALID_ID")) notFound();
+    throw error;
   }
-
-  if (!blog) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-black via-blue-950 to-black flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-gray-400 text-xl mb-4">Blog post not found</p>
-          <button
-            onClick={() => router.push("/blog")}
-            className="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-xl transition"
-          >
-            Back to Blog
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <main className="min-h-screen bg-gradient-to-br from-black via-blue-950 to-black text-white px-6 py-28">
       <div className="max-w-3xl mx-auto">
 
         {/* Back Button */}
-        <button
-          onClick={() => router.push("/blog")}
-          className="mb-8 text-gray-400 hover:text-blue-400 transition flex items-center gap-2"
-        >
-          ← Back to Blog
-        </button>
+        <Link href="/blog" className="mb-8 inline-block text-gray-400 hover:text-blue-400">Back to Blog</Link>
 
         {/* Cover Image */}
         {blog.coverImage && (

@@ -222,7 +222,7 @@ export default function LandingPage() {
             </div>
 
             <p className="text-xs font-mono tracking-widest uppercase mb-3 transition-colors duration-300"
-              style={{ color: hovered === "guest" ? "#72efdd" : "rgba(255,255,255,0.25)" }}>// Enter as</p>
+              style={{ color: hovered === "guest" ? "#72efdd" : "rgba(255,255,255,0.25)" }}>{"// Enter as"}</p>
 
             <h2 className="text-7xl font-black mb-4 tracking-tight bg-clip-text text-transparent transition-all duration-300"
               style={{ backgroundImage: hovered === "guest" ? "linear-gradient(135deg, #ffffff, #72efdd)" : "linear-gradient(135deg, rgba(255,255,255,0.4), rgba(255,255,255,0.15))" }}>
@@ -300,7 +300,7 @@ export default function LandingPage() {
             </div>
 
             <p className="text-xs font-mono tracking-widest uppercase mb-3 transition-colors duration-300"
-              style={{ color: hovered === "admin" ? "#a78bfa" : "rgba(255,255,255,0.25)" }}>// Enter as</p>
+              style={{ color: hovered === "admin" ? "#a78bfa" : "rgba(255,255,255,0.25)" }}>{"// Enter as"}</p>
 
             <h2 className="text-7xl font-black mb-4 tracking-tight bg-clip-text text-transparent transition-all duration-300"
               style={{ backgroundImage: hovered === "admin" ? "linear-gradient(135deg, #ffffff, #a78bfa)" : "linear-gradient(135deg, rgba(255,255,255,0.4), rgba(255,255,255,0.15))" }}>

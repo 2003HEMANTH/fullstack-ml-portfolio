@@ -1,32 +1,93 @@
-# Full Stack ML Portfolio Platform
+# Full Stack ML Portfolio
 
-Next.js + Node.js + Flask + MongoDB + AWS
+Next.js frontend, Express/MongoDB portfolio API, and Flask PDF resume analyzer.
 
-## Deployment
+## Local setup and testing
 
-Recommended split:
-- Frontend: Vercel (`frontend`)
-- Backend: Render (`backend`)
-- ML service: Render (`ml-service`)
+Follow [TESTING.md](TESTING.md) for Windows setup, automated checks, and browser
+acceptance tests. Email notifications are optional and currently deferred;
+contact submissions are still stored in MongoDB when email is unavailable.
 
-### Frontend on Vercel
+## Deploy
 
-- Import the repo into Vercel.
-- Set the project root directory to `frontend`.
-- Add these environment variables:
-  - `NEXT_PUBLIC_API_URL=https://<your-render-backend-url>/api`
-  - `NEXT_PUBLIC_ML_URL=https://<your-render-ml-url>`
+| Service | Platform | Root | Install/build | Start | Health |
+|---|---|---|---|---|---|
+| Frontend | Vercel (Next.js preset) | `frontend` | `npm ci`, then `npm run build` | Managed by Vercel (`npm start` locally) | `/` |
+| API | Render Node web service | `backend` | `npm ci` | `npm start` | `/healthz` |
+| ML | Render Python web service | `ml-service` | `pip install -r requirements.txt` | `gunicorn app:app --bind 0.0.0.0:$PORT --timeout 120 --workers 2` | `/healthz` |
 
-### Backend and ML service on Render
+Use Node 22 or newer (Mongoose 9 requires Node 20.19+), and Python 3.12.
+The root [render.yaml](render.yaml) provisions the two Render services. Set the
+service branch to `main`. Health checks are public liveness checks; they do not
+prove MongoDB connectivity. Flask listens on port 8000 locally; Express on 5000.
+Both bind to `0.0.0.0` and honor `PORT`.
 
-- Use the root [`render.yaml`](./render.yaml) Blueprint to create both services.
-- Set the required secret values in Render:
-  - Backend: `MONGO_URI`, `JWT_SECRET`, `CLIENT_URL`, `EMAIL_USER`, `EMAIL_PASS`, `CONTACT_NOTIFY_TO`, `CONTACT_NOTIFY_FROM`
-  - ML service: `CORS_ORIGINS`
+### Exact environment variables
 
-Suggested values:
-- `CLIENT_URL=https://<your-vercel-frontend-url>`
-- `CORS_ORIGINS=https://<your-vercel-frontend-url>`
+Copy each service's `.env.example` for local setup. All values in examples are
+placeholders or non-secret defaults. Never commit real `.env` files.
+
+**Backend**
+
+- Required: `MONGO_URI`, `JWT_SECRET`, `CLIENT_URL`.
+- Set `NODE_ENV=production` on Render; use `development` locally.
+- `PORT` is supplied by Render; local default is `5000`.
+- One-time admin seeding: `ADMIN_EMAIL`, `ADMIN_PASSWORD` (not required by the server).
+- Optional SMTP notifications: `EMAIL_HOST`, `EMAIL_PORT`, `EMAIL_SECURE`,
+  `EMAIL_USER`, `EMAIL_PASS`, `CONTACT_NOTIFY_TO`, `CONTACT_NOTIFY_FROM`.
+  Leave `EMAIL_USER` and `EMAIL_PASS` empty while email is deferred.
+- `CLIENT_URL=https://your-site.vercel.app,http://localhost:3000` uses exact
+  comma-separated origins with no trailing slash. Add preview origins explicitly.
+
+**ML service**
+
+- `CORS_ORIGINS=https://your-site.vercel.app,http://localhost:3000`.
+- `PORT` is supplied by Render; local default is `8000`.
+- No wildcard origins. With an empty allowlist, browser-origin requests are rejected.
+
+**Frontend**
+
+- `NEXT_PUBLIC_API_URL=https://your-api.onrender.com/api`.
+- `NEXT_PUBLIC_ML_URL=https://your-ml.onrender.com`.
+- Set these in Vercel before building; public variables are embedded in the build.
+  Redeploy after changing them. Neither URL should have a trailing slash.
+  [Next.js environment documentation](https://nextjs.org/docs/app/building-your-application/configuring/environment-variables).
+
+### Deployment sequence
+
+1. Create the two Render services and configure their environment variables.
+2. In Atlas, create a database user, URL-encode its password in `MONGO_URI`, and
+   allow the Render service's outbound IP ranges plus your local IP for seeding.
+   Find the ranges under Render's service connection details; opening access to
+   every IP is not required. [Render outbound IP documentation](https://render.com/docs/outbound-ip-addresses).
+3. From your local `backend` directory, point your private `.env` at the intended
+   Atlas database and run `npm run seed:admin` once. The command updates the named
+   admin's password if it already exists. Remove the seed password from deployment
+   settings after use. Free Render services do not have dashboard shell access.
+4. Run the A4 migration below against the intended database before serving legacy
+   blogs. The deployment does not run migrations automatically.
+5. Deploy the frontend on Vercel with both public URLs. Add its exact HTTPS origin
+   to `CLIENT_URL` and `CORS_ORIGINS`, then redeploy/restart affected services.
+6. Run the production smoke tests in [TESTING.md](TESTING.md).
+
+Production auth cookies use `HttpOnly`, `Secure`, `SameSite=None`, and `Path=/`.
+If login does not survive refresh, inspect `/api/auth/me`, CORS credentials, the
+cookie's attributes, and browser third-party-cookie restrictions. Correct flags
+alone cannot override a browser policy that blocks third-party cookies.
+
+Free Render instances can sleep. The analyzer warms `/healthz` on page mount,
+allows 90 seconds for requests, and explains slow starts after five seconds.
+An uptime monitor is optional; it is not a guarantee against cold starts or free
+instance limits. Render's free services also block SMTP ports 25/465/587, so Gmail
+SMTP will need a suitable paid runtime or a future HTTPS email-provider integration.
+[Render free-service limitations](https://render.com/docs/free).
+
+## Deferred work
+
+Admin edit UI, draft management, contact inbox UI, pagination, SEO/sitemap,
+image optimization, animation performance, richer matching, refresh tokens,
+and CI remain deferred. Automated tests now exist for the backend, ML service,
+and frontend error handling; live database and production checks remain separate.
 
 ### Sanitize existing blog content (A4)
 

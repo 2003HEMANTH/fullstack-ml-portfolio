@@ -21,7 +21,7 @@ class ValidationError extends AppError {
     /** @param {import("zod").ZodError} zodError */
     constructor(zodError) {
         const details = zodError.issues.map((i) => ({
-            path: i.path.join("."),
+            field: i.path.join("."),
             message: i.message,
         }));
         super(422, "VALIDATION_ERROR", "Request validation failed.", details);

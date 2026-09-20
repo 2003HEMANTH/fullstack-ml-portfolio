@@ -4,10 +4,12 @@ services:
     name: fullstack-ml-portfolio-backend
     rootDir: backend
     plan: free
-    buildCommand: npm install
+    buildCommand: npm ci
     startCommand: npm start
-    healthCheckPath: /
+    healthCheckPath: /healthz
     envVars:
+      - key: NODE_ENV
+        value: production
       - key: MONGO_URI
         sync: false
       - key: JWT_SECRET
@@ -21,13 +23,13 @@ services:
       - key: EMAIL_SECURE
         value: "true"
       - key: EMAIL_USER
-        sync: false
+        value: ""
       - key: EMAIL_PASS
-        sync: false
+        value: ""
       - key: CONTACT_NOTIFY_TO
-        sync: false
+        value: ""
       - key: CONTACT_NOTIFY_FROM
-        sync: false
+        value: ""
 
   - type: web
     runtime: python
@@ -35,8 +37,8 @@ services:
     rootDir: ml-service
     plan: free
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn app:app
-    healthCheckPath: /
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --timeout 120 --workers 2
+    healthCheckPath: /healthz
     envVars:
       - key: CORS_ORIGINS
         sync: false

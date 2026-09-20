@@ -1,6 +1,6 @@
 const express = require("express");
 const http = require("http");
-const mongoSanitize = require("express-mongo-sanitize");
+const { sanitizeMongo, parseQuery } = require("../middleware/sanitizeMongo");
 const cookieParser = require("cookie-parser");
 const requestId = require("../middleware/requestId");
 const errorHandler = require("../middleware/errorHandler");
@@ -13,17 +13,8 @@ app.use(requestId);
 app.use(express.json());
 app.use(cookieParser());
 
-// Express 5 compatibility for express-mongo-sanitize
-app.use((req, _res, next) => {
-    Object.defineProperty(req, "query", {
-        value: { ...req.query },
-        writable: true,
-        configurable: true,
-        enumerable: true,
-    });
-    next();
-});
-app.use(mongoSanitize());
+app.set("query parser", parseQuery);
+app.use(sanitizeMongo);
 
 // Mount actual routers
 app.use("/api/auth", require("../routes/authRoutes"));
@@ -121,7 +112,7 @@ async function runTests() {
             assert("Malformed body returns 422", res.status === 422, `(got ${res.status})`);
             assert("Error code is VALIDATION_ERROR", res.body?.error?.code === "VALIDATION_ERROR");
             assert("Details array is non-empty", Array.isArray(res.body?.error?.details) && res.body.error.details.length > 0);
-            const paths = res.body?.error?.details?.map((d) => d.path) || [];
+            const paths = res.body?.error?.details?.map((d) => d.field) || [];
             assert("Details contain name error", paths.includes("name"));
             assert("Details contain email error", paths.includes("email"));
             assert("Details contain message error", paths.includes("message"));

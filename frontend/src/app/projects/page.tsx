@@ -1,19 +1,22 @@
 "use client";
 import { useEffect, useState } from "react";
-import api from "@/lib/api";
+import api, { errorMessage } from "@/lib/api";
+import ApiErrorNotice from "@/components/ApiErrorNotice";
 import { Project } from "@/types";
 
 export default function ProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchProjects = async () => {
-      try {
+      setError("");
+    try {
         const res = await api.get("/projects");
         setProjects(res.data.projects);
       } catch (error) {
-        console.error("Failed to fetch projects", error);
+        setError(errorMessage(error));
       } finally {
         setLoading(false);
       }
@@ -31,10 +34,11 @@ export default function ProjectsPage() {
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-black via-blue-950 to-black text-white px-10 py-28">
+      <ApiErrorNotice message={error} />
       <h1 className="text-5xl font-bold text-center text-blue-400 mb-4">My Projects</h1>
       <p className="text-center text-gray-400 mb-12">Things I have built</p>
 
-      {projects.length === 0 ? (
+      {!error && projects.length === 0 ? (
         <div className="text-center text-gray-500 text-xl mt-20">
           No projects yet. Add some from admin panel.
         </div>

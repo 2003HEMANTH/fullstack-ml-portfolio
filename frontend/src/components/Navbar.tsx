@@ -40,10 +40,10 @@ export default function Navbar() {
       <nav
         className="fixed top-0 w-full z-[9999] transition-all duration-300"
         style={{
-          background: scrolled ? "rgba(6,2,15,0.95)" : "rgba(6,2,15,0.6)",
+          background: scrolled ? "rgba(17,7,32,0.95)" : "rgba(17,7,32,0.6)",
           backdropFilter: "blur(20px)",
-          borderBottom: scrolled ? "1px solid rgba(116,0,184,0.2)" : "1px solid transparent",
-          boxShadow: scrolled ? "0 4px 30px rgba(116,0,184,0.08)" : "none",
+          borderBottom: scrolled ? "1px solid rgba(124,58,237,0.2)" : "1px solid transparent",
+          boxShadow: scrolled ? "0 4px 30px rgba(124,58,237,0.08)" : "none",
         }}
       >
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
@@ -55,13 +55,13 @@ export default function Navbar() {
           >
             <div
               className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-black text-white transition-all duration-300 group-hover:scale-110"
-              style={{ background: "linear-gradient(135deg, #7400b8, #5e60ce, #72efdd)" }}
+              style={{ background: "linear-gradient(135deg, #7c3aed, #a855f7, #e9d5ff)" }}
             >
               HL
             </div>
             <span
               className="font-black text-lg tracking-tight bg-clip-text text-transparent"
-              style={{ backgroundImage: "linear-gradient(135deg, #ffffff, #a78bfa, #72efdd)" }}
+              style={{ backgroundImage: "linear-gradient(135deg, #ffffff, #a78bfa, #e9d5ff)" }}
             >
               Hemanth
               
@@ -79,7 +79,7 @@ export default function Navbar() {
                   className="relative px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200"
                   style={{
                     color: isActive ? "#ffffff" : "rgba(255,255,255,0.5)",
-                    background: isActive ? "rgba(116,0,184,0.15)" : "transparent",
+                    background: isActive ? "rgba(124,58,237,0.15)" : "transparent",
                   }}
                   onMouseEnter={e => {
                     if (!isActive) {
@@ -98,7 +98,7 @@ export default function Navbar() {
                   {isActive && (
                     <span
                       className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-0.5 rounded-full"
-                      style={{ background: "linear-gradient(90deg, #7400b8, #72efdd)" }}
+                      style={{ background: "linear-gradient(90deg, #7c3aed, #e9d5ff)" }}
                     />
                   )}
                 </Link>
@@ -117,8 +117,8 @@ export default function Navbar() {
             <Link
               href="/contact"
               className="px-4 py-2 rounded-lg text-sm font-semibold text-white transition-all duration-300 hover:-translate-y-0.5"
-              style={{ background: "linear-gradient(135deg, #7400b8, #5e60ce)" }}
-              onMouseEnter={e => (e.currentTarget.style.boxShadow = "0 8px 25px rgba(116,0,184,0.4)")}
+              style={{ background: "linear-gradient(135deg, #7c3aed, #a855f7)" }}
+              onMouseEnter={e => (e.currentTarget.style.boxShadow = "0 8px 25px rgba(124,58,237,0.4)")}
               onMouseLeave={e => (e.currentTarget.style.boxShadow = "none")}
             >
               Hire Me
@@ -129,7 +129,7 @@ export default function Navbar() {
           <button
             onClick={() => setMenuOpen(!menuOpen)}
             className="md:hidden flex flex-col justify-center items-center w-10 h-10 rounded-lg transition-all duration-200 focus:outline-none"
-            style={{ background: menuOpen ? "rgba(116,0,184,0.15)" : "rgba(255,255,255,0.05)" }}
+            style={{ background: menuOpen ? "rgba(124,58,237,0.15)" : "rgba(255,255,255,0.05)" }}
             aria-label="Toggle menu"
           >
             <span
@@ -174,9 +174,9 @@ export default function Navbar() {
         className="fixed top-0 right-0 h-full w-72 z-[9998] md:hidden flex flex-col transition-all duration-300 ease-out"
         style={{
           background: "linear-gradient(160deg, rgba(10,3,25,0.99), rgba(20,5,45,0.99))",
-          borderLeft: "1px solid rgba(116,0,184,0.25)",
+          borderLeft: "1px solid rgba(124,58,237,0.25)",
           transform: menuOpen ? "translateX(0)" : "translateX(100%)",
-          boxShadow: menuOpen ? "-20px 0 60px rgba(116,0,184,0.2)" : "none",
+          boxShadow: menuOpen ? "-20px 0 60px rgba(124,58,237,0.2)" : "none",
         }}
       >
         {/* Panel Header */}
@@ -184,7 +184,7 @@ export default function Navbar() {
           <div className="flex items-center gap-2">
             <div
               className="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-black text-white"
-              style={{ background: "linear-gradient(135deg, #7400b8, #5e60ce, #72efdd)" }}
+              style={{ background: "linear-gradient(135deg, #7c3aed, #a855f7, #e9d5ff)" }}
             >
               HL
             </div>
@@ -208,8 +208,8 @@ export default function Navbar() {
                 href={link.href}
                 className="flex items-center gap-3 px-4 py-4 rounded-xl transition-all duration-200"
                 style={{
-                  background: isActive ? "rgba(116,0,184,0.15)" : "transparent",
-                  border: isActive ? "1px solid rgba(116,0,184,0.3)" : "1px solid transparent",
+                  background: isActive ? "rgba(124,58,237,0.15)" : "transparent",
+                  border: isActive ? "1px solid rgba(124,58,237,0.3)" : "1px solid transparent",
                   color: isActive ? "#ffffff" : "rgba(255,255,255,0.5)",
                 }}
                 onMouseEnter={e => {
@@ -229,13 +229,13 @@ export default function Navbar() {
                   className="w-2 h-2 rounded-full shrink-0"
                   style={{
                     background: isActive
-                      ? "linear-gradient(135deg, #7400b8, #72efdd)"
+                      ? "linear-gradient(135deg, #7c3aed, #e9d5ff)"
                       : "rgba(255,255,255,0.12)",
                   }}
                 />
                 <span className="font-medium text-sm">{link.label}</span>
                 {isActive && (
-                  <span className="ml-auto text-xs" style={{ color: "#7400b8" }}>●</span>
+                  <span className="ml-auto text-xs" style={{ color: "#7c3aed" }}>●</span>
                 )}
               </Link>
             );
@@ -260,7 +260,7 @@ export default function Navbar() {
           <Link
             href="/contact"
             className="flex items-center justify-center w-full py-3.5 rounded-xl font-bold text-white text-sm transition-all duration-200 hover:opacity-90 mb-4"
-            style={{ background: "linear-gradient(135deg, #7400b8, #5e60ce, #48bfe3)" }}
+            style={{ background: "linear-gradient(135deg, #7c3aed, #a855f7, #a78bfa)" }}
           >
             Hire Me
           </Link>

@@ -26,16 +26,16 @@ export default function ProjectsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-black via-blue-950 to-black flex items-center justify-center">
-        <div className="text-blue-400 text-2xl animate-pulse">Loading Projects...</div>
+      <div className="min-h-screen bg-gradient-to-br from-black via-violet-950 to-black flex items-center justify-center">
+        <div className="text-purple-300 text-2xl animate-pulse">Loading Projects...</div>
       </div>
     );
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-black via-blue-950 to-black text-white px-10 py-28">
+    <main className="min-h-screen bg-gradient-to-br from-black via-violet-950 to-black text-white px-10 py-28">
       <ApiErrorNotice message={error} />
-      <h1 className="text-5xl font-bold text-center text-blue-400 mb-4">My Projects</h1>
+      <h1 className="text-5xl font-bold text-center text-purple-300 mb-4">My Projects</h1>
       <p className="text-center text-gray-400 mb-12">Things I have built</p>
 
       {!error && projects.length === 0 ? (
@@ -47,7 +47,7 @@ export default function ProjectsPage() {
           {projects.map((project) => (
             <div
               key={project._id}
-              className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl p-6 hover:border-blue-500/50 hover:shadow-lg hover:shadow-blue-500/10 transition-all duration-300"
+              className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl p-6 hover:border-purple-500/50 hover:shadow-lg hover:shadow-purple-500/10 transition-all duration-300"
             >
               {project.imageUrl && (
                 <img
@@ -62,7 +62,7 @@ export default function ProjectsPage() {
                 {project.techStack.map((tech, index) => (
                   <span
                     key={index}
-                    className="px-3 py-1 bg-blue-500/20 text-blue-300 text-xs rounded-full border border-blue-500/30"
+                    className="px-3 py-1 bg-purple-500/20 text-purple-300 text-xs rounded-full border border-purple-500/30"
                   >
                     {tech}
                   </span>
@@ -84,7 +84,7 @@ export default function ProjectsPage() {
                   <a  href={project.liveUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-4 py-2 bg-blue-500/30 hover:bg-blue-500/50 rounded-lg text-sm transition"
+                    className="px-4 py-2 bg-purple-500/30 hover:bg-purple-500/50 rounded-lg text-sm transition"
                   >
                     Live Demo
                   </a>

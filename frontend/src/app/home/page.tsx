@@ -5,16 +5,16 @@ import { useEffect, useState, useRef } from "react";
 const roles = ["Full Stack Developer", "ML Engineer", "Data Scientist", "Cloud Engineer"];
 
 const THEME = {
-  royalViolet: "#7400b8",
-  indigoBloom: "#6930c3",
-  slateIndigo: "#5e60ce",
-  blueEnergy: "#5390d9",
-  freshSky: "#4ea8de",
-  skySurge: "#48bfe3",
-  strongCyan: "#56cfe1",
-  pearlAqua: "#64dfdf",
-  turquoise: "#72efdd",
-  aquamarine: "#80ffdb",
+  royalViolet: "#7c3aed",
+  indigoBloom: "#8b5cf6",
+  slateIndigo: "#a855f7",
+  blueEnergy: "#c084fc",
+  freshSky: "#d8b4fe",
+  skySurge: "#a78bfa",
+  strongCyan: "#c4b5fd",
+  pearlAqua: "#ddd6fe",
+  turquoise: "#e9d5ff",
+  aquamarine: "#f3e8ff",
 };
 
 function StarField() {
@@ -189,7 +189,7 @@ export default function Home() {
   const accentGradient = `linear-gradient(90deg, ${THEME.royalViolet}, ${THEME.slateIndigo}, ${THEME.blueEnergy}, ${THEME.aquamarine})`;
 
   return (
-    <main className="bg-[#06020f] text-white overflow-x-hidden cursor-none min-h-screen">
+    <main className="bg-[#110720] text-white overflow-x-hidden cursor-none min-h-screen">
 
       {/* Custom cursor */}
       <div ref={cursorRingRef} className="fixed top-0 left-0 w-10 h-10 rounded-full pointer-events-none z-[99999] transition-transform duration-75 ease-out" style={{ border: `1.5px solid ${THEME.slateIndigo}80` }} />
@@ -200,8 +200,8 @@ export default function Home() {
 
       {/* Background gradients */}
       <div className="fixed inset-0 z-0 pointer-events-none">
-        <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse 80% 50% at 50% -10%, rgba(116,0,184,0.25) 0%, transparent 70%)" }} />
-        <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse 60% 40% at 80% 80%, rgba(128,255,219,0.06) 0%, transparent 60%)" }} />
+        <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse 80% 50% at 50% -10%, rgba(124,58,237,0.25) 0%, transparent 70%)" }} />
+        <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse 60% 40% at 80% 80%, rgba(216,180,254,0.06) 0%, transparent 60%)" }} />
         <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse 50% 30% at 10% 60%, rgba(105,48,195,0.12) 0%, transparent 60%)" }} />
         {/* Animated aurora */}
         <div className="absolute top-0 left-0 right-0 h-screen pointer-events-none overflow-hidden">
@@ -284,7 +284,7 @@ export default function Home() {
           <button
             onClick={() => router.push("/projects")}
             className="group relative px-8 py-3.5 rounded-xl font-bold text-sm tracking-wide overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl text-white"
-            style={{ background: mainGradient, boxShadow: `0 0 0 rgba(116,0,184,0)`, transition: "all 0.3s ease" }}
+            style={{ background: mainGradient, boxShadow: `0 0 0 rgba(124,58,237,0)`, transition: "all 0.3s ease" }}
             onMouseEnter={e => (e.currentTarget.style.boxShadow = `0 8px 40px ${THEME.royalViolet}50`)}
             onMouseLeave={e => (e.currentTarget.style.boxShadow = "none")}
           >
@@ -644,7 +644,7 @@ export default function Home() {
           100% { transform: translateY(10px); opacity: 0; }
         }
         * { cursor: none !important; }
-        ::selection { background: rgba(116,0,184,0.4); color: white; }
+        ::selection { background: rgba(124,58,237,0.4); color: white; }
         html { scroll-behavior: smooth; }
       `}</style>
     </main>

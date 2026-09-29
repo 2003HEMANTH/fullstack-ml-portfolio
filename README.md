@@ -8,6 +8,17 @@ Follow [TESTING.md](TESTING.md) for Windows setup, automated checks, and browser
 acceptance tests. Email notifications are optional and currently deferred;
 contact submissions are still stored in MongoDB when email is unavailable.
 
+After creating the three local environment files and installing each service's
+dependencies, start the complete application from the repository root:
+
+```sh
+bun run dev
+```
+
+`npm run dev` is also supported. The launcher starts the frontend at
+`http://localhost:3000`, the API at `http://localhost:5000`, and the ML service
+at `http://localhost:8000`. Press `Ctrl+C` once to stop all three services.
+
 ## Deploy
 
 | Service | Platform | Root | Install/build | Start | Health |

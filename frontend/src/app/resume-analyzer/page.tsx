@@ -87,11 +87,11 @@ function ScoreRing({ score, label, color, size = 120 }: { score: number; label: 
           />
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-3xl font-black text-white">{score}</span>
+          <span className="text-3xl font-black text-[#171716]">{score}</span>
           <span className="text-xs text-gray-500">/100</span>
         </div>
       </div>
-      <span className="text-xs font-semibold text-gray-400 text-center">{label}</span>
+      <span className="text-xs font-semibold text-gray-600 text-center">{label}</span>
     </div>
   );
 }
@@ -233,7 +233,7 @@ export default function ResumeAnalyzerPage() {
               }}
             >
               <div className="mx-auto mb-5 grid h-12 w-12 place-items-center rounded-xl border border-[#dfdfd9] bg-[#f7f7f4] text-xs font-bold text-[#2557d6]">PDF</div>
-              <p className="text-white font-semibold text-lg mb-1">
+              <p className="text-gray-900 font-semibold text-lg mb-1">
                 {file ? file.name : "Drop your resume here"}
               </p>
               <p className="text-gray-600 text-sm">
@@ -245,14 +245,14 @@ export default function ResumeAnalyzerPage() {
             {/* JD Input */}
             <div className="rounded-2xl p-6" style={{ background: "#ffffff", border: "1px solid #dfdfd9" }}>
               <div className="flex items-center gap-2 mb-3">
-                <span className="text-sm font-semibold text-white">Job Description</span>
+                <span className="text-sm font-semibold text-gray-900">Job Description</span>
                 <span className="px-2 py-0.5 rounded-md text-xs" style={{ background: "rgba(37,87,214,0.08)", color: THEME.turquoise, border: `1px solid rgba(37,87,214,0.16)` }}>Optional but recommended</span>
               </div>
               <textarea
                 value={jd}
                 onChange={(e) => setJd(e.target.value)}
                 placeholder="Paste the job description here to get JD-specific ATS score, keyword matching and tailored suggestions..."
-                className="w-full bg-transparent text-gray-300 text-sm placeholder-gray-700 resize-none focus:outline-none leading-relaxed"
+                className="w-full bg-transparent text-gray-800 text-sm placeholder-gray-500 resize-none focus:outline-none leading-relaxed"
                 rows={6}
                 maxLength={20_000}
               />
@@ -318,7 +318,7 @@ export default function ResumeAnalyzerPage() {
               </div>
               <button
                 onClick={() => { setResult(null); setFile(null); setJd(""); setError(""); }}
-                className="text-sm text-gray-500 hover:text-white transition-colors px-4 py-2 rounded-lg hover:bg-white/5"
+                className="text-sm text-gray-600 hover:text-[#183b96] transition-colors px-4 py-2 rounded-lg hover:bg-[#eef3ff]"
               >
                 Analyze Another
               </button>
@@ -341,7 +341,7 @@ export default function ResumeAnalyzerPage() {
                   {Object.entries(analysis.ats_breakdown).map(([key, val]) => (
                     <div key={key}>
                       <div className="flex justify-between mb-1">
-                        <span className="text-xs text-gray-400 capitalize">{key}</span>
+                        <span className="text-xs text-gray-600 capitalize">{key}</span>
                         <span className="text-xs" style={{ color: THEME.turquoise }}>{val}/25</span>
                       </div>
                       <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "#eeeeea" }}>
@@ -356,7 +356,7 @@ export default function ResumeAnalyzerPage() {
             {/* AI Summary */}
             <div className="p-6 rounded-2xl" style={{ background: `linear-gradient(135deg, rgba(124,58,237,0.08), rgba(168,85,247,0.05))`, border: `1px solid rgba(37,87,214,0.12)` }}>
               <p className="text-xs uppercase tracking-widest mb-3" style={{ color: THEME.slate }}> AI Summary</p>
-              <p className="text-gray-300 leading-relaxed">{analysis.summary}</p>
+              <p className="text-gray-700 leading-relaxed">{analysis.summary}</p>
             </div>
 
             {/* Tabs */}
@@ -369,7 +369,7 @@ export default function ResumeAnalyzerPage() {
                   style={{
                     background: activeTab === tab.id ? `rgba(37,87,214,0.12)` : "#ffffff",
                     border: `1px solid ${activeTab === tab.id ? "rgba(37,87,214,0.3)" : "#dfdfd9"}`,
-                    color: activeTab === tab.id ? "#ffffff" : "rgba(255,255,255,0.4)",
+                    color: activeTab === tab.id ? THEME.turquoise : "#4b5563",
                   }}
                 >
                   {tab.label}
@@ -385,10 +385,10 @@ export default function ResumeAnalyzerPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {/* Strengths */}
                   <div className="p-6 rounded-2xl" style={{ background: "rgba(34,197,94,0.04)", border: "1px solid rgba(34,197,94,0.1)" }}>
-                    <p className="text-xs uppercase tracking-widest mb-4 text-green-500">Strengths</p>
+                    <p className="text-xs uppercase tracking-widest mb-4 text-green-700">Strengths</p>
                     <ul className="space-y-2">
                       {analysis.strengths.map((s, i) => (
-                        <li key={i} className="flex gap-3 text-sm text-gray-300">
+                        <li key={i} className="flex gap-3 text-sm text-gray-700">
                           <span className="text-green-400 shrink-0 mt-0.5"></span>
                           {s}
                         </li>
@@ -398,10 +398,10 @@ export default function ResumeAnalyzerPage() {
 
                   {/* Weaknesses */}
                   <div className="p-6 rounded-2xl" style={{ background: "rgba(239,68,68,0.04)", border: "1px solid rgba(239,68,68,0.1)" }}>
-                    <p className="text-xs uppercase tracking-widest mb-4 text-red-400">Areas to Improve</p>
+                    <p className="text-xs uppercase tracking-widest mb-4 text-red-600">Areas to Improve</p>
                     <ul className="space-y-2">
                       {analysis.weaknesses.map((w, i) => (
-                        <li key={i} className="flex gap-3 text-sm text-gray-300">
+                        <li key={i} className="flex gap-3 text-sm text-gray-700">
                           <span className="text-red-400 shrink-0 mt-0.5"></span>
                           {w}
                         </li>
@@ -412,7 +412,7 @@ export default function ResumeAnalyzerPage() {
                   {/* Recommendation */}
                   <div className="md:col-span-2 p-6 rounded-2xl" style={{ background: "#ffffff", border: "1px solid #dfdfd9" }}>
                     <p className="text-xs uppercase tracking-widest mb-3 text-gray-600"> AI Recommendation</p>
-                    <p className="text-gray-300 leading-relaxed text-sm">{analysis.recommendation}</p>
+                    <p className="text-gray-700 leading-relaxed text-sm">{analysis.recommendation}</p>
                   </div>
 
                   {/* Contact Info */}
@@ -421,19 +421,19 @@ export default function ResumeAnalyzerPage() {
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                       <div>
                         <p className="text-gray-600 text-xs mb-1">Email</p>
-                        <p className="text-gray-300">{basicInfo.email || "Not found"}</p>
+                        <p className="text-gray-800">{basicInfo.email || "Not found"}</p>
                       </div>
                       <div>
                         <p className="text-gray-600 text-xs mb-1">Phone</p>
-                        <p className="text-gray-300">{basicInfo.phone || "Not found"}</p>
+                        <p className="text-gray-800">{basicInfo.phone || "Not found"}</p>
                       </div>
                       <div>
                         <p className="text-gray-600 text-xs mb-1">Word Count</p>
-                        <p className="text-gray-300">{basicInfo.word_count} words</p>
+                        <p className="text-gray-800">{basicInfo.word_count} words</p>
                       </div>
                       <div>
                         <p className="text-gray-600 text-xs mb-1">Skills Found</p>
-                        <p className="text-gray-300">{basicInfo.skills.length} skills</p>
+                        <p className="text-gray-800">{basicInfo.skills.length} skills</p>
                       </div>
                     </div>
                   </div>
@@ -498,11 +498,11 @@ export default function ResumeAnalyzerPage() {
                               {s.category}
                             </span>
                           </div>
-                          <p className="text-gray-300 text-sm leading-relaxed mb-2">{s.suggestion}</p>
+                          <p className="text-gray-700 text-sm leading-relaxed mb-2">{s.suggestion}</p>
                           {s.example && (
                             <div className="p-3 rounded-lg mt-2" style={{ background: "rgba(37,87,214,0.04)", border: "1px solid rgba(37,87,214,0.08)" }}>
                               <p className="text-xs text-gray-600 mb-1">Example:</p>
-                              <p className="text-xs text-gray-400 leading-relaxed">{s.example}</p>
+                              <p className="text-xs text-gray-600 leading-relaxed">{s.example}</p>
                             </div>
                           )}
                         </div>
@@ -520,11 +520,11 @@ export default function ResumeAnalyzerPage() {
                     <div key={i} className="rounded-2xl overflow-hidden" style={{ border: "1px solid #dfdfd9" }}>
                       <div className="p-4" style={{ background: "rgba(239,68,68,0.05)", borderBottom: "1px solid rgba(239,68,68,0.1)" }}>
                         <p className="text-xs text-red-400 mb-2">BEFORE</p>
-                        <p className="text-gray-400 text-sm leading-relaxed">{r.original}</p>
+                        <p className="text-gray-700 text-sm leading-relaxed">{r.original}</p>
                       </div>
                       <div className="p-4" style={{ background: "rgba(34,197,94,0.05)" }}>
                         <p className="text-xs text-green-400 mb-2">AFTER (AI Improved)</p>
-                        <p className="text-gray-200 text-sm leading-relaxed">{r.improved}</p>
+                        <p className="text-gray-800 text-sm leading-relaxed">{r.improved}</p>
                       </div>
                     </div>
                   ))}
@@ -541,7 +541,7 @@ export default function ResumeAnalyzerPage() {
                         <p className="text-xs uppercase tracking-widest mb-2" style={{ color: THEME.slate }}>
                           {section.replace(/_/g, " ")}
                         </p>
-                        <p className="text-gray-300 text-sm leading-relaxed">{feedback}</p>
+                        <p className="text-gray-700 text-sm leading-relaxed">{feedback}</p>
                       </div>
                     );
                   })}

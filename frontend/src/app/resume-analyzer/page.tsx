@@ -3,13 +3,13 @@ import { useState, useRef } from "react";
 import { mlApi, mlErrorMessage } from "@/lib/api";
 
 const THEME = {
-  violet: "#7c3aed",
-  indigo: "#8b5cf6",
-  slate: "#a855f7",
-  blue: "#c084fc",
-  cyan: "#a78bfa",
-  turquoise: "#e9d5ff",
-  aquamarine: "#f3e8ff",
+  violet: "#2557d6",
+  indigo: "#3d68dd",
+  slate: "#526faf",
+  blue: "#6f83b8",
+  cyan: "#76839d",
+  turquoise: "#183b96",
+  aquamarine: "#f7f7f4",
 };
 
 interface ATSBreakdown {
@@ -78,7 +78,7 @@ function ScoreRing({ score, label, color, size = 120 }: { score: number; label: 
     <div className="flex flex-col items-center gap-2">
       <div className="relative" style={{ width: size, height: size }}>
         <svg width={size} height={size} className="-rotate-90">
-          <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="8" />
+          <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke="#eeeeea" strokeWidth="8" />
           <circle
             cx={size / 2} cy={size / 2} r={radius} fill="none"
             stroke={color} strokeWidth="8" strokeLinecap="round"
@@ -191,18 +191,18 @@ export default function ResumeAnalyzerPage() {
   const basicInfo = result?.basic_info;
 
   return (
-    <main className="min-h-screen bg-[#110720] text-white px-4 md:px-6 py-24">
+    <main className="resume-light page-shell px-4 md:px-6">
       <div className="max-w-5xl mx-auto">
 
         {/* Header */}
         <div className="text-center mb-12">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border text-sm mb-6"
-            style={{ background: "rgba(124,58,237,0.1)", border: "1px solid rgba(124,58,237,0.3)", color: THEME.turquoise }}>
+            style={{ background: "rgba(37,87,214,0.08)", border: "1px solid rgba(37,87,214,0.22)", color: THEME.turquoise }}>
             <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: THEME.turquoise }} />
             Powered by AI
           </div>
-          <h1 className="text-4xl md:text-5xl font-black mb-4">
-            <span className="bg-clip-text text-transparent" style={{ backgroundImage: `linear-gradient(135deg, #ffffff, ${THEME.slate}, ${THEME.turquoise})` }}>
+          <h1 className="text-4xl md:text-5xl font-semibold tracking-[-0.04em] mb-4">
+            <span className="bg-clip-text text-transparent" style={{ backgroundImage: `linear-gradient(135deg, #171716, ${THEME.violet})` }}>
               AI Resume Analyzer
             </span>
           </h1>
@@ -228,11 +228,11 @@ export default function ResumeAnalyzerPage() {
               onClick={() => fileInputRef.current?.click()}
               className="rounded-2xl p-10 text-center transition-all duration-300 cursor-pointer"
               style={{
-                border: `2px dashed ${dragging ? THEME.turquoise : "rgba(255,255,255,0.1)"}`,
-                background: dragging ? "rgba(192,132,252,0.05)" : "rgba(255,255,255,0.02)",
+                border: `2px dashed ${dragging ? THEME.turquoise : "#cecec7"}`,
+                background: dragging ? "rgba(37,87,214,0.04)" : "#ffffff",
               }}
             >
-              <div className="text-5xl mb-4"></div>
+              <div className="mx-auto mb-5 grid h-12 w-12 place-items-center rounded-xl border border-[#dfdfd9] bg-[#f7f7f4] text-xs font-bold text-[#2557d6]">PDF</div>
               <p className="text-white font-semibold text-lg mb-1">
                 {file ? file.name : "Drop your resume here"}
               </p>
@@ -243,10 +243,10 @@ export default function ResumeAnalyzerPage() {
             </div>
 
             {/* JD Input */}
-            <div className="rounded-2xl p-6" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}>
+            <div className="rounded-2xl p-6" style={{ background: "#ffffff", border: "1px solid #dfdfd9" }}>
               <div className="flex items-center gap-2 mb-3">
                 <span className="text-sm font-semibold text-white">Job Description</span>
-                <span className="px-2 py-0.5 rounded-md text-xs" style={{ background: "rgba(192,132,252,0.1)", color: THEME.turquoise, border: `1px solid rgba(192,132,252,0.2)` }}>Optional but recommended</span>
+                <span className="px-2 py-0.5 rounded-md text-xs" style={{ background: "rgba(37,87,214,0.08)", color: THEME.turquoise, border: `1px solid rgba(37,87,214,0.16)` }}>Optional but recommended</span>
               </div>
               <textarea
                 value={jd}
@@ -277,8 +277,8 @@ export default function ResumeAnalyzerPage() {
               onClick={handleAnalyze}
               disabled={!file || loading}
               className="w-full py-4 rounded-xl font-bold text-lg transition-all duration-300 hover:-translate-y-1 text-white disabled:opacity-50 disabled:cursor-not-allowed"
-              style={{ background: `linear-gradient(135deg, ${THEME.violet}, ${THEME.slate}, ${THEME.cyan})` }}
-              onMouseEnter={e => (e.currentTarget.style.boxShadow = `0 12px 40px rgba(124,58,237,0.4)`)}
+              style={{ background: THEME.violet }}
+              onMouseEnter={e => (e.currentTarget.style.boxShadow = `0 12px 40px rgba(37,87,214,0.3)`)}
               onMouseLeave={e => (e.currentTarget.style.boxShadow = "none")}
             >
               {loading ? (
@@ -306,12 +306,12 @@ export default function ResumeAnalyzerPage() {
           <div className="space-y-6">
 
             {/* Top Bar */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-xl" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-xl" style={{ background: "#ffffff", border: "1px solid #dfdfd9" }}>
               <div className="flex items-center gap-3 flex-wrap">
                 <RatingBadge rating={analysis.overall_rating} />
                 <LikelihoodBadge value={analysis.interview_likelihood} />
                 {basicInfo.has_jd && (
-                  <span className="px-2.5 py-1 rounded-lg text-xs" style={{ background: "rgba(192,132,252,0.1)", border: "1px solid rgba(192,132,252,0.2)", color: THEME.turquoise }}>
+                  <span className="px-2.5 py-1 rounded-lg text-xs" style={{ background: "rgba(37,87,214,0.08)", border: "1px solid rgba(37,87,214,0.16)", color: THEME.turquoise }}>
                     JD Analysis Enabled
                   </span>
                 )}
@@ -326,26 +326,26 @@ export default function ResumeAnalyzerPage() {
 
             {/* Score Cards */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="col-span-2 md:col-span-1 flex justify-center p-6 rounded-2xl" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}>
+              <div className="col-span-2 md:col-span-1 flex justify-center p-6 rounded-2xl" style={{ background: "#ffffff", border: "1px solid #dfdfd9" }}>
                 <ScoreRing score={analysis.ats_score} label="ATS Score" color={THEME.violet} />
               </div>
               {analysis.jd_match_score !== null && (
-                <div className="col-span-2 md:col-span-1 flex justify-center p-6 rounded-2xl" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}>
+                <div className="col-span-2 md:col-span-1 flex justify-center p-6 rounded-2xl" style={{ background: "#ffffff", border: "1px solid #dfdfd9" }}>
                   <ScoreRing score={analysis.jd_match_score} label="JD Match Score" color={THEME.turquoise} />
                 </div>
               )}
               {/* ATS Breakdown */}
-              <div className={`${analysis.jd_match_score !== null ? "col-span-2" : "col-span-2"} p-6 rounded-2xl`} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}>
-                <p className="text-xs font-mono text-gray-600 uppercase tracking-widest mb-4">ATS Breakdown</p>
+              <div className={`${analysis.jd_match_score !== null ? "col-span-2" : "col-span-2"} p-6 rounded-2xl`} style={{ background: "#ffffff", border: "1px solid #dfdfd9" }}>
+                <p className="text-xs text-gray-600 uppercase tracking-widest mb-4">ATS Breakdown</p>
                 <div className="space-y-3">
                   {Object.entries(analysis.ats_breakdown).map(([key, val]) => (
                     <div key={key}>
                       <div className="flex justify-between mb-1">
                         <span className="text-xs text-gray-400 capitalize">{key}</span>
-                        <span className="text-xs font-mono" style={{ color: THEME.turquoise }}>{val}/25</span>
+                        <span className="text-xs" style={{ color: THEME.turquoise }}>{val}/25</span>
                       </div>
-                      <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.05)" }}>
-                        <div className="h-full rounded-full transition-all duration-1000" style={{ width: `${(val / 25) * 100}%`, background: `linear-gradient(90deg, ${THEME.violet}, ${THEME.turquoise})` }} />
+                      <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "#eeeeea" }}>
+                        <div className="h-full rounded-full transition-all duration-1000" style={{ width: `${(val / 25) * 100}%`, background: THEME.violet }} />
                       </div>
                     </div>
                   ))}
@@ -354,8 +354,8 @@ export default function ResumeAnalyzerPage() {
             </div>
 
             {/* AI Summary */}
-            <div className="p-6 rounded-2xl" style={{ background: `linear-gradient(135deg, rgba(124,58,237,0.08), rgba(168,85,247,0.05))`, border: `1px solid rgba(124,58,237,0.2)` }}>
-              <p className="text-xs font-mono uppercase tracking-widest mb-3" style={{ color: THEME.slate }}> AI Summary</p>
+            <div className="p-6 rounded-2xl" style={{ background: `linear-gradient(135deg, rgba(124,58,237,0.08), rgba(168,85,247,0.05))`, border: `1px solid rgba(37,87,214,0.12)` }}>
+              <p className="text-xs uppercase tracking-widest mb-3" style={{ color: THEME.slate }}> AI Summary</p>
               <p className="text-gray-300 leading-relaxed">{analysis.summary}</p>
             </div>
 
@@ -367,8 +367,8 @@ export default function ResumeAnalyzerPage() {
                   onClick={() => setActiveTab(tab.id)}
                   className="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200"
                   style={{
-                    background: activeTab === tab.id ? `rgba(124,58,237,0.2)` : "rgba(255,255,255,0.03)",
-                    border: `1px solid ${activeTab === tab.id ? "rgba(124,58,237,0.4)" : "rgba(255,255,255,0.06)"}`,
+                    background: activeTab === tab.id ? `rgba(37,87,214,0.12)` : "#ffffff",
+                    border: `1px solid ${activeTab === tab.id ? "rgba(37,87,214,0.3)" : "#dfdfd9"}`,
                     color: activeTab === tab.id ? "#ffffff" : "rgba(255,255,255,0.4)",
                   }}
                 >
@@ -385,7 +385,7 @@ export default function ResumeAnalyzerPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {/* Strengths */}
                   <div className="p-6 rounded-2xl" style={{ background: "rgba(34,197,94,0.04)", border: "1px solid rgba(34,197,94,0.1)" }}>
-                    <p className="text-xs font-mono uppercase tracking-widest mb-4 text-green-500">Strengths</p>
+                    <p className="text-xs uppercase tracking-widest mb-4 text-green-500">Strengths</p>
                     <ul className="space-y-2">
                       {analysis.strengths.map((s, i) => (
                         <li key={i} className="flex gap-3 text-sm text-gray-300">
@@ -398,7 +398,7 @@ export default function ResumeAnalyzerPage() {
 
                   {/* Weaknesses */}
                   <div className="p-6 rounded-2xl" style={{ background: "rgba(239,68,68,0.04)", border: "1px solid rgba(239,68,68,0.1)" }}>
-                    <p className="text-xs font-mono uppercase tracking-widest mb-4 text-red-400">Areas to Improve</p>
+                    <p className="text-xs uppercase tracking-widest mb-4 text-red-400">Areas to Improve</p>
                     <ul className="space-y-2">
                       {analysis.weaknesses.map((w, i) => (
                         <li key={i} className="flex gap-3 text-sm text-gray-300">
@@ -410,14 +410,14 @@ export default function ResumeAnalyzerPage() {
                   </div>
 
                   {/* Recommendation */}
-                  <div className="md:col-span-2 p-6 rounded-2xl" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}>
-                    <p className="text-xs font-mono uppercase tracking-widest mb-3 text-gray-600"> AI Recommendation</p>
+                  <div className="md:col-span-2 p-6 rounded-2xl" style={{ background: "#ffffff", border: "1px solid #dfdfd9" }}>
+                    <p className="text-xs uppercase tracking-widest mb-3 text-gray-600"> AI Recommendation</p>
                     <p className="text-gray-300 leading-relaxed text-sm">{analysis.recommendation}</p>
                   </div>
 
                   {/* Contact Info */}
-                  <div className="md:col-span-2 p-6 rounded-2xl" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}>
-                    <p className="text-xs font-mono uppercase tracking-widest mb-4 text-gray-600"> Extracted Info</p>
+                  <div className="md:col-span-2 p-6 rounded-2xl" style={{ background: "#ffffff", border: "1px solid #dfdfd9" }}>
+                    <p className="text-xs uppercase tracking-widest mb-4 text-gray-600"> Extracted Info</p>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                       <div>
                         <p className="text-gray-600 text-xs mb-1">Email</p>
@@ -446,7 +446,7 @@ export default function ResumeAnalyzerPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Matched Keywords */}
                     <div className="p-6 rounded-2xl" style={{ background: "rgba(34,197,94,0.04)", border: "1px solid rgba(34,197,94,0.1)" }}>
-                      <p className="text-xs font-mono uppercase tracking-widest mb-4 text-green-500"> Matched Keywords ({analysis.matched_keywords.length})</p>
+                      <p className="text-xs uppercase tracking-widest mb-4 text-green-500"> Matched Keywords ({analysis.matched_keywords.length})</p>
                       <div className="flex flex-wrap gap-2">
                         {analysis.matched_keywords.length > 0 ? analysis.matched_keywords.map((kw) => (
                           <span key={kw} className="px-2.5 py-1 rounded-lg text-xs" style={{ background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.2)", color: "#22c55e" }}>
@@ -458,7 +458,7 @@ export default function ResumeAnalyzerPage() {
 
                     {/* Missing Keywords */}
                     <div className="p-6 rounded-2xl" style={{ background: "rgba(239,68,68,0.04)", border: "1px solid rgba(239,68,68,0.1)" }}>
-                      <p className="text-xs font-mono uppercase tracking-widest mb-4 text-red-400"> Missing Keywords ({analysis.missing_keywords.length})</p>
+                      <p className="text-xs uppercase tracking-widest mb-4 text-red-400"> Missing Keywords ({analysis.missing_keywords.length})</p>
                       <div className="flex flex-wrap gap-2">
                         {analysis.missing_keywords.length > 0 ? analysis.missing_keywords.map((kw) => (
                           <span key={kw} className="px-2.5 py-1 rounded-lg text-xs" style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)", color: "#ef4444" }}>
@@ -471,7 +471,7 @@ export default function ResumeAnalyzerPage() {
 
                   {/* Skill Gap */}
                   <div className="p-6 rounded-2xl" style={{ background: "rgba(234,179,8,0.04)", border: "1px solid rgba(234,179,8,0.1)" }}>
-                    <p className="text-xs font-mono uppercase tracking-widest mb-4 text-yellow-500"> Skill Gap</p>
+                    <p className="text-xs uppercase tracking-widest mb-4 text-yellow-500"> Skill Gap</p>
                     <div className="flex flex-wrap gap-2">
                       {analysis.skill_gap.length > 0 ? analysis.skill_gap.map((skill) => (
                         <span key={skill} className="px-2.5 py-1 rounded-lg text-xs" style={{ background: "rgba(234,179,8,0.1)", border: "1px solid rgba(234,179,8,0.2)", color: "#eab308" }}>
@@ -487,21 +487,21 @@ export default function ResumeAnalyzerPage() {
               {activeTab === "suggestions" && (
                 <div className="space-y-3">
                   {analysis.ai_suggestions.map((s, i) => (
-                    <div key={i} className="p-5 rounded-xl transition-all duration-200 hover:-translate-y-0.5" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}>
+                    <div key={i} className="p-5 rounded-xl transition-all duration-200 hover:-translate-y-0.5" style={{ background: "#ffffff", border: "1px solid #dfdfd9" }}>
                       <div className="flex items-start gap-3">
                         <div className="shrink-0 mt-0.5">
                           <PriorityBadge priority={s.priority} />
                         </div>
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-2 flex-wrap">
-                            <span className="text-xs font-mono px-2 py-0.5 rounded" style={{ background: "rgba(168,85,247,0.1)", color: THEME.slate, border: `1px solid rgba(168,85,247,0.2)` }}>
+                            <span className="text-xs px-2 py-0.5 rounded" style={{ background: "rgba(37,87,214,0.08)", color: THEME.slate, border: `1px solid rgba(37,87,214,0.18)` }}>
                               {s.category}
                             </span>
                           </div>
                           <p className="text-gray-300 text-sm leading-relaxed mb-2">{s.suggestion}</p>
                           {s.example && (
-                            <div className="p-3 rounded-lg mt-2" style={{ background: "rgba(192,132,252,0.05)", border: "1px solid rgba(192,132,252,0.1)" }}>
-                              <p className="text-xs font-mono text-gray-600 mb-1">Example:</p>
+                            <div className="p-3 rounded-lg mt-2" style={{ background: "rgba(37,87,214,0.04)", border: "1px solid rgba(37,87,214,0.08)" }}>
+                              <p className="text-xs text-gray-600 mb-1">Example:</p>
                               <p className="text-xs text-gray-400 leading-relaxed">{s.example}</p>
                             </div>
                           )}
@@ -517,13 +517,13 @@ export default function ResumeAnalyzerPage() {
                 <div className="space-y-4">
                   <p className="text-gray-600 text-sm">AI has rewritten these bullet points to be more impactful with metrics and stronger language.</p>
                   {analysis.rewrite_suggestions.map((r, i) => (
-                    <div key={i} className="rounded-2xl overflow-hidden" style={{ border: "1px solid rgba(255,255,255,0.06)" }}>
+                    <div key={i} className="rounded-2xl overflow-hidden" style={{ border: "1px solid #dfdfd9" }}>
                       <div className="p-4" style={{ background: "rgba(239,68,68,0.05)", borderBottom: "1px solid rgba(239,68,68,0.1)" }}>
-                        <p className="text-xs font-mono text-red-400 mb-2">BEFORE</p>
+                        <p className="text-xs text-red-400 mb-2">BEFORE</p>
                         <p className="text-gray-400 text-sm leading-relaxed">{r.original}</p>
                       </div>
                       <div className="p-4" style={{ background: "rgba(34,197,94,0.05)" }}>
-                        <p className="text-xs font-mono text-green-400 mb-2">AFTER (AI Improved)</p>
+                        <p className="text-xs text-green-400 mb-2">AFTER (AI Improved)</p>
                         <p className="text-gray-200 text-sm leading-relaxed">{r.improved}</p>
                       </div>
                     </div>
@@ -537,8 +537,8 @@ export default function ResumeAnalyzerPage() {
                   {Object.entries(analysis.section_feedback).map(([section, feedback]) => {
                     if (!feedback) return null;
                     return (
-                      <div key={section} className="p-5 rounded-xl" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}>
-                        <p className="text-xs font-mono uppercase tracking-widest mb-2" style={{ color: THEME.slate }}>
+                      <div key={section} className="p-5 rounded-xl" style={{ background: "#ffffff", border: "1px solid #dfdfd9" }}>
+                        <p className="text-xs uppercase tracking-widest mb-2" style={{ color: THEME.slate }}>
                           {section.replace(/_/g, " ")}
                         </p>
                         <p className="text-gray-300 text-sm leading-relaxed">{feedback}</p>
@@ -551,12 +551,12 @@ export default function ResumeAnalyzerPage() {
               {/* SKILLS TAB */}
               {activeTab === "skills" && (
                 <div className="space-y-4">
-                  <div className="p-6 rounded-2xl" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}>
-                    <p className="text-xs font-mono uppercase tracking-widest mb-4 text-gray-600"> Detected Skills ({basicInfo.skills.length})</p>
+                  <div className="p-6 rounded-2xl" style={{ background: "#ffffff", border: "1px solid #dfdfd9" }}>
+                    <p className="text-xs uppercase tracking-widest mb-4 text-gray-600"> Detected Skills ({basicInfo.skills.length})</p>
                     <div className="flex flex-wrap gap-2">
                       {basicInfo.skills.map((skill) => (
-                        <span key={skill} className="px-3 py-1.5 rounded-lg text-xs font-mono transition-all duration-200 hover:scale-105"
-                          style={{ background: `rgba(124,58,237,0.1)`, border: `1px solid rgba(124,58,237,0.2)`, color: THEME.slate }}>
+                        <span key={skill} className="px-3 py-1.5 rounded-lg text-xs transition-all duration-200 hover:scale-105"
+                          style={{ background: `rgba(37,87,214,0.08)`, border: `1px solid rgba(37,87,214,0.12)`, color: THEME.slate }}>
                           {skill}
                         </span>
                       ))}
@@ -565,10 +565,10 @@ export default function ResumeAnalyzerPage() {
 
                   {analysis.skill_gap.length > 0 && (
                     <div className="p-6 rounded-2xl" style={{ background: "rgba(234,179,8,0.04)", border: "1px solid rgba(234,179,8,0.1)" }}>
-                      <p className="text-xs font-mono uppercase tracking-widest mb-4 text-yellow-500"> Skills to Add</p>
+                      <p className="text-xs uppercase tracking-widest mb-4 text-yellow-500"> Skills to Add</p>
                       <div className="flex flex-wrap gap-2">
                         {analysis.skill_gap.map((skill) => (
-                          <span key={skill} className="px-3 py-1.5 rounded-lg text-xs font-mono"
+                          <span key={skill} className="px-3 py-1.5 rounded-lg text-xs"
                             style={{ background: "rgba(234,179,8,0.1)", border: "1px solid rgba(234,179,8,0.2)", color: "#eab308" }}>
                             + {skill}
                           </span>

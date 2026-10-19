@@ -85,20 +85,20 @@ export default function AdminDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-black via-violet-950 to-black flex items-center justify-center">
-        <div className="text-purple-300 text-2xl animate-pulse">Loading Dashboard...</div>
+      <div className="admin-light min-h-screen bg-[#f7f7f4] flex items-center justify-center px-5">
+        <div className="text-[#2557d6] text-2xl animate-pulse">Loading Dashboard...</div>
       </div>
     );
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-black via-violet-950 to-black text-white px-10 py-28">
+    <main className="admin-light page-shell">
       <ApiErrorNotice message={error} />
       {/* Header */}
       <div className="flex justify-between items-center mb-10 max-w-7xl mx-auto">
         <div>
-          <h1 className="text-4xl font-bold text-purple-300">Admin Dashboard</h1>
-          <p className="text-gray-400 mt-1">Manage your portfolio content</p>
+          <h1 className="text-4xl font-bold text-[#2557d6]">Admin Dashboard</h1>
+          <p className="text-[#686864] mt-1">Manage your portfolio content</p>
         </div>
         <button
           onClick={handleLogout}
@@ -110,18 +110,18 @@ export default function AdminDashboard() {
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-7xl mx-auto mb-10">
-        <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl p-6">
-          <p className="text-gray-400 text-sm">Total Projects</p>
-          <p className="text-4xl font-bold text-purple-300 mt-2">{projects.length}</p>
+        <div className="card p-6">
+          <p className="text-[#686864] text-sm">Total Projects</p>
+          <p className="text-4xl font-bold text-[#2557d6] mt-2">{projects.length}</p>
         </div>
-        <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl p-6">
-          <p className="text-gray-400 text-sm">Featured Projects</p>
-          <p className="text-4xl font-bold text-purple-300 mt-2">
+        <div className="card p-6">
+          <p className="text-[#686864] text-sm">Featured Projects</p>
+          <p className="text-4xl font-bold text-[#2557d6] mt-2">
             {projects.filter((p) => p.featured).length}
           </p>
         </div>
-        <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl p-6">
-          <p className="text-gray-400 text-sm">Status</p>
+        <div className="card p-6">
+          <p className="text-[#686864] text-sm">Status</p>
           <p className="text-4xl font-bold text-green-400 mt-2">Live</p>
         </div>
       </div>
@@ -130,7 +130,7 @@ export default function AdminDashboard() {
 <div className="max-w-7xl mx-auto mb-6 flex gap-4">
   <button
     onClick={() => router.push("/admin/dashboard/blog")}
-    className="px-6 py-3 bg-purple-600 hover:bg-purple-700 rounded-xl font-semibold transition"
+    className="px-6 py-3 bg-[#171716] hover:bg-[#2557d6] text-white rounded-xl font-semibold transition"
   >
     Manage Blogs
   </button>
@@ -140,7 +140,7 @@ export default function AdminDashboard() {
       <div className="max-w-7xl mx-auto mb-6">
         <button
           onClick={() => setShowForm(!showForm)}
-          className="px-6 py-3 bg-violet-600 hover:bg-violet-700 rounded-xl font-semibold transition"
+          className="px-6 py-3 bg-[#171716] hover:bg-[#2557d6] text-white rounded-xl font-semibold transition"
         >
           {showForm ? "Cancel" : "+ Add New Project"}
         </button>
@@ -151,74 +151,74 @@ export default function AdminDashboard() {
         <div className="max-w-7xl mx-auto mb-10">
           <form
             onSubmit={handleSubmit}
-            className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl p-8 grid grid-cols-1 md:grid-cols-2 gap-6"
+            className="card p-8 grid grid-cols-1 md:grid-cols-2 gap-6"
           >
             <div>
-              <label className="text-gray-300 text-sm mb-2 block">Title</label>
+              <label className="text-[#3f3f3b] text-sm mb-2 block">Title</label>
               <input
                 type="text"
                 value={form.title}
                 onChange={(e) => setForm({ ...form, title: e.target.value })}
-                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 transition"
+                className="w-full px-4 py-3 bg-white border border-[#dfdfd9] rounded-xl text-[#171716] placeholder-gray-500 focus:outline-none focus:border-[#2557d6] transition"
                 placeholder="Project Title"
                 required
               />
             </div>
 
             <div>
-              <label className="text-gray-300 text-sm mb-2 block">
+              <label className="text-[#3f3f3b] text-sm mb-2 block">
                 Tech Stack (comma separated)
               </label>
               <input
                 type="text"
                 value={form.techStack}
                 onChange={(e) => setForm({ ...form, techStack: e.target.value })}
-                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 transition"
+                className="w-full px-4 py-3 bg-white border border-[#dfdfd9] rounded-xl text-[#171716] placeholder-gray-500 focus:outline-none focus:border-[#2557d6] transition"
                 placeholder="React, Node.js, MongoDB"
                 required
               />
             </div>
 
             <div className="md:col-span-2">
-              <label className="text-gray-300 text-sm mb-2 block">Description</label>
+              <label className="text-[#3f3f3b] text-sm mb-2 block">Description</label>
               <textarea
                 value={form.description}
                 onChange={(e) => setForm({ ...form, description: e.target.value })}
-                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 transition h-28 resize-none"
+                className="w-full px-4 py-3 bg-white border border-[#dfdfd9] rounded-xl text-[#171716] placeholder-gray-500 focus:outline-none focus:border-[#2557d6] transition h-28 resize-none"
                 placeholder="Project description..."
                 required
               />
             </div>
 
             <div>
-              <label className="text-gray-300 text-sm mb-2 block">GitHub URL</label>
+              <label className="text-[#3f3f3b] text-sm mb-2 block">GitHub URL</label>
               <input
                 type="url"
                 value={form.githubUrl}
                 onChange={(e) => setForm({ ...form, githubUrl: e.target.value })}
-                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 transition"
+                className="w-full px-4 py-3 bg-white border border-[#dfdfd9] rounded-xl text-[#171716] placeholder-gray-500 focus:outline-none focus:border-[#2557d6] transition"
                 placeholder="https://github.com/..."
               />
             </div>
 
             <div>
-              <label className="text-gray-300 text-sm mb-2 block">Live URL</label>
+              <label className="text-[#3f3f3b] text-sm mb-2 block">Live URL</label>
               <input
                 type="url"
                 value={form.liveUrl}
                 onChange={(e) => setForm({ ...form, liveUrl: e.target.value })}
-                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 transition"
+                className="w-full px-4 py-3 bg-white border border-[#dfdfd9] rounded-xl text-[#171716] placeholder-gray-500 focus:outline-none focus:border-[#2557d6] transition"
                 placeholder="https://..."
               />
             </div>
 
             <div className="md:col-span-2">
-              <label className="text-gray-300 text-sm mb-2 block">Image URL</label>
+              <label className="text-[#3f3f3b] text-sm mb-2 block">Image URL</label>
               <input
                 type="url"
                 value={form.imageUrl}
                 onChange={(e) => setForm({ ...form, imageUrl: e.target.value })}
-                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 transition"
+                className="w-full px-4 py-3 bg-white border border-[#dfdfd9] rounded-xl text-[#171716] placeholder-gray-500 focus:outline-none focus:border-[#2557d6] transition"
                 placeholder="https://image-url.com/..."
               />
             </div>
@@ -228,16 +228,16 @@ export default function AdminDashboard() {
                 type="checkbox"
                 checked={form.featured}
                 onChange={(e) => setForm({ ...form, featured: e.target.checked })}
-                className="w-4 h-4 accent-purple-500"
+                className="w-4 h-4 accent-[#2557d6]"
               />
-              <label className="text-gray-300 text-sm">Featured Project</label>
+              <label className="text-[#3f3f3b] text-sm">Featured Project</label>
             </div>
 
             <div className="md:col-span-2">
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full py-3 bg-violet-600 hover:bg-violet-700 disabled:bg-violet-800 rounded-xl font-semibold transition"
+                className="w-full py-3 bg-[#171716] hover:bg-[#2557d6] disabled:bg-[#888881] text-white rounded-xl font-semibold transition"
               >
                 {submitting ? "Adding Project..." : "Add Project"}
               </button>
@@ -246,23 +246,23 @@ export default function AdminDashboard() {
         </div>
       )}
 
-      {!error && projects.length === 0 && <p className="text-center text-gray-400">No projects yet. Create your first project above.</p>}
+      {!error && projects.length === 0 && <p className="text-center text-[#686864]">No projects yet. Create your first project above.</p>}
       {/* Projects List */}
       <div className="max-w-7xl mx-auto">
-        <h2 className="text-2xl font-bold text-white mb-6">All Projects</h2>
+        <h2 className="text-2xl font-bold text-[#171716] mb-6">All Projects</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {projects.map((project) => (
             <div
               key={project._id}
-              className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl p-6"
+              className="card p-6"
             >
-              <h3 className="text-lg font-bold text-white mb-2">{project.title}</h3>
-              <p className="text-gray-400 text-sm mb-4 line-clamp-2">{project.description}</p>
+              <h3 className="text-lg font-bold text-[#171716] mb-2">{project.title}</h3>
+              <p className="text-[#686864] text-sm mb-4 line-clamp-2">{project.description}</p>
               <div className="flex flex-wrap gap-2 mb-4">
                 {project.techStack.map((tech, index) => (
                   <span
                     key={index}
-                    className="px-2 py-1 bg-purple-500/20 text-purple-300 text-xs rounded-full"
+                    className="px-2 py-1 bg-[#eef2ff] text-[#2557d6] text-xs rounded-full"
                   >
                     {tech}
                   </span>
